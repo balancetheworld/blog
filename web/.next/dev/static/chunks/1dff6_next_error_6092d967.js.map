@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 3, "column": 0}, "map": {"version":3,"sources":["file:///Users/zyj/%E4%BB%A3%E7%A0%81%E6%96%87%E4%BB%B6%E5%A4%B9/%E6%88%91%E7%9A%84%E4%BB%A3%E7%A0%81/blog/my-blog/node_modules/.pnpm/next%4016.0.10_react-dom%4019.2.0_react%4019.2.0__react%4019.2.0/node_modules/next/error.js"],"sourcesContent":["module.exports = require('./dist/pages/_error')\n"],"names":[],"mappings":"AAAA,OAAO,OAAO","ignoreList":[0]}}]
-}
