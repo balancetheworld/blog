@@ -1,0 +1,9 @@
+{
+  "/admin/categories/page": "app/admin/categories/page.js",
+  "/admin/new/page": "app/admin/new/page.js",
+  "/admin/page": "app/admin/page.js",
+  "/blog/archive/page": "app/blog/archive/page.js",
+  "/blog/login/page": "app/blog/login/page.js",
+  "/blog/posts/[slug]/page": "app/blog/posts/[slug]/page.js",
+  "/page": "app/page.js"
+}

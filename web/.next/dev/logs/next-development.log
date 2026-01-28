@@ -1,0 +1,135 @@
+[00:00:00.393] Server  ERROR   (node:70034) Warning: Setting the NODE_TLS_REJECT_UNAUTHORIZED environment variable to '0' makes TLS connections and HTTPS requests insecure by disabling certificate verification.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[00:00:00.395] Server  LOG      ✓ Ready in 290ms
+[00:00:07.053] Server  LOG     [Store] Fetching posts with params: "sortBy=latest"
+[00:00:07.054] Server  LOG     [API] Fetching: "http://localhost:3001/api/posts?sortBy=latest" "(server-side:" true ")"
+[00:00:07.132] Server  LOG     [API] Response status: 200 "OK:" true
+[00:00:07.133] Server  LOG     [API] Response data: "3 items"
+[00:00:07.133] Server  LOG     [Store] Received posts: 3 "posts"
+[00:00:07.225] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:07.340] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:00:07.341] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/","route":"/"}
+[00:00:07.341] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://localhost:3000/","r":"","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1769576648686}
+[00:00:09.765] Server  LOG     [API] Fetching: "http://localhost:3001/api/posts/1769576340698mme4j5je61r" "(server-side:" true ")"
+[00:00:09.768] Server  LOG     [API] Fetching: "http://localhost:3001/api/posts/1769576340698mme4j5je61r" "(server-side:" true ")"
+[00:00:09.775] Server  LOG     [API] Response status: 200 "OK:" true
+[00:00:09.775] Server  LOG     [API] Response data: "data received"
+[00:00:09.776] Server  LOG     [API] Response status: 200 "OK:" true
+[00:00:09.777] Server  LOG     [API] Response data: "data received"
+[00:00:09.926] Server  ERROR   (node:70034) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+[00:00:10.020] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/blog/posts/1769576340698mme4j5je61r color: rgb(120, 120, 120) color: inherit {"dp":"/blog/posts/[slug]","o":"http://localhost:3000/blog/posts/1769576340698mme4j5je61r","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1769576651364}
+[00:00:15.803] Server  LOG     [Store] Fetching posts with params: "sortBy=latest"
+[00:00:15.803] Server  LOG     [API] Fetching: "http://localhost:3001/api/posts?sortBy=latest" "(server-side:" true ")"
+[00:00:15.823] Server  LOG     [API] Response status: 200 "OK:" true
+[00:00:15.823] Server  LOG     [API] Response data: "3 items"
+[00:00:15.824] Server  LOG     [Store] Received posts: 3 "posts"
+[00:00:15.945] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://localhost:3000/","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1769576657289}
+[00:00:18.227] Server  LOG     [API] Fetching: "http://localhost:3001/api/posts/react-hooks-guide" "(server-side:" true ")"
+[00:00:18.233] Server  LOG     [API] Fetching: "http://localhost:3001/api/posts/react-hooks-guide" "(server-side:" true ")"
+[00:00:18.237] Server  LOG     [API] Response status: 200 "OK:" true
+[00:00:18.237] Server  LOG     [API] Response data: "data received"
+[00:00:18.239] Server  LOG     [API] Response status: 200 "OK:" true
+[00:00:18.239] Server  LOG     [API] Response data: "data received"
+[00:00:18.379] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/blog/posts/react-hooks-guide color: rgb(120, 120, 120) color: inherit {"dp":"/blog/posts/[slug]","o":"http://localhost:3000/blog/posts/react-hooks-guide","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1769576659724}
+[00:00:21.585] Server  LOG     [Store] Fetching posts with params: "sortBy=latest"
+[00:00:21.585] Server  LOG     [API] Fetching: "http://localhost:3001/api/posts?sortBy=latest" "(server-side:" true ")"
+[00:00:21.605] Server  LOG     [API] Response status: 200 "OK:" true
+[00:00:21.606] Server  LOG     [API] Response data: "3 items"
+[00:00:21.606] Server  LOG     [Store] Received posts: 3 "posts"
+[00:00:21.731] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://localhost:3000/","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1769576663075}
+[00:00:26.071] Server  LOG     [API] Fetching: "http://localhost:3001/api/posts/1769576340698mme4j5je61r" "(server-side:" true ")"
+[00:00:26.079] Server  LOG     [API] Fetching: "http://localhost:3001/api/posts/1769576340698mme4j5je61r" "(server-side:" true ")"
+[00:00:26.090] Server  LOG     [API] Response status: 200 "OK:" true
+[00:00:26.090] Server  LOG     [API] Response data: "data received"
+[00:00:26.092] Server  LOG     [API] Response status: 200 "OK:" true
+[00:00:26.092] Server  LOG     [API] Response data: "data received"
+[00:00:26.210] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/blog/posts/1769576340698mme4j5je61r color: rgb(120, 120, 120) color: inherit {"dp":"/blog/posts/[slug]","o":"http://localhost:3000/blog/posts/1769576340698mme4j5je61r","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1769576667554}
+[00:00:28.624] Server  LOG     [Store] Fetching posts with params: "sortBy=latest"
+[00:00:28.625] Server  LOG     [API] Fetching: "http://localhost:3001/api/posts?sortBy=latest" "(server-side:" true ")"
+[00:00:28.637] Server  LOG     [API] Response status: 200 "OK:" true
+[00:00:28.638] Server  LOG     [API] Response data: "3 items"
+[00:00:28.638] Server  LOG     [Store] Received posts: 3 "posts"
+[00:00:28.757] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://localhost:3000/","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1769576670102}
+[00:00:29.422] Server  LOG     [API] Fetching: "http://localhost:3001/api/posts/1769576340698mme4j5je61r" "(server-side:" true ")"
+[00:00:29.429] Server  LOG     [API] Fetching: "http://localhost:3001/api/posts/1769576340698mme4j5je61r" "(server-side:" true ")"
+[00:00:29.437] Server  LOG     [API] Response status: 200 "OK:" true
+[00:00:29.437] Server  LOG     [API] Response data: "data received"
+[00:00:29.439] Server  LOG     [API] Response status: 200 "OK:" true
+[00:00:29.439] Server  LOG     [API] Response data: "data received"
+[00:00:29.563] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/blog/posts/1769576340698mme4j5je61r color: rgb(120, 120, 120) color: inherit {"dp":"/blog/posts/[slug]","o":"http://localhost:3000/blog/posts/1769576340698mme4j5je61r","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1769576670906}
+[00:00:30.757] Server  LOG     [Store] Fetching posts with params: "sortBy=latest"
+[00:00:30.758] Server  LOG     [API] Fetching: "http://localhost:3001/api/posts?sortBy=latest" "(server-side:" true ")"
+[00:00:30.773] Server  LOG     [API] Response status: 200 "OK:" true
+[00:00:30.774] Server  LOG     [API] Response data: "3 items"
+[00:00:30.774] Server  LOG     [Store] Received posts: 3 "posts"
+[00:00:30.894] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://localhost:3000/","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1769576672239}
+[00:00:33.133] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/blog/login color: rgb(120, 120, 120) color: inherit {"dp":"/blog/login","o":"http://localhost:3000/blog/login","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1769576674472}
+[00:00:49.628] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/admin color: rgb(120, 120, 120) color: inherit {"dp":"/admin","o":"http://localhost:3000/admin","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1769576690973}
+[00:00:52.327] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/admin/new color: rgb(120, 120, 120) color: inherit {"dp":"/admin/new","o":"http://localhost:3000/admin/new","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1769576693667}
+[00:01:42.918] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/admin color: rgb(120, 120, 120) color: inherit {"dp":"/admin","o":"http://localhost:3000/admin","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1769576744263}
+[00:01:47.521] Server  LOG     [Store] Fetching posts with params: "sortBy=latest"
+[00:01:47.521] Server  LOG     [API] Fetching: "http://localhost:3001/api/posts?sortBy=latest" "(server-side:" true ")"
+[00:01:47.539] Server  LOG     [API] Response status: 200 "OK:" true
+[00:01:47.539] Server  LOG     [API] Response data: "4 items"
+[00:01:47.539] Server  LOG     [Store] Received posts: 4 "posts"
+[00:01:47.665] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://localhost:3000/","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1769576749008}
+[00:01:48.810] Server  LOG     [API] Fetching: "http://localhost:3001/api/posts/1111" "(server-side:" true ")"
+[00:01:48.815] Server  LOG     [API] Fetching: "http://localhost:3001/api/posts/1111" "(server-side:" true ")"
+[00:01:48.819] Server  LOG     [API] Response status: 200 "OK:" true
+[00:01:48.820] Server  LOG     [API] Response data: "data received"
+[00:01:48.822] Server  LOG     [API] Response status: 200 "OK:" true
+[00:01:48.822] Server  LOG     [API] Response data: "data received"
+[00:01:48.945] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/blog/posts/1111 color: rgb(120, 120, 120) color: inherit {"dp":"/blog/posts/[slug]","o":"http://localhost:3000/blog/posts/1111","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1769576750290}
+[00:02:00.154] Server  LOG     [API] Fetching: "http://localhost:3001/api/posts" "(server-side:" true ")"
+[00:02:00.164] Server  LOG     [API] Response status: 200 "OK:" true
+[00:02:00.164] Server  LOG     [API] Response data: "4 items"
+[00:02:00.282] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/blog/archive color: rgb(120, 120, 120) color: inherit {"dp":"/blog/archive","o":"http://localhost:3000/blog/archive","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1769576761627}
+[00:02:04.860] Server  LOG     [Store] Fetching posts with params: "sortBy=latest"
+[00:02:04.860] Server  LOG     [API] Fetching: "http://localhost:3001/api/posts?sortBy=latest" "(server-side:" true ")"
+[00:02:04.878] Server  LOG     [API] Response status: 200 "OK:" true
+[00:02:04.879] Server  LOG     [API] Response data: "4 items"
+[00:02:04.879] Server  LOG     [Store] Received posts: 4 "posts"
+[00:02:05.000] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://localhost:3000/","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1769576766345}
+[00:02:07.334] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/blog/login color: rgb(120, 120, 120) color: inherit {"dp":"/blog/login","o":"http://localhost:3000/blog/login","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1769576768675}
+[00:02:11.890] Server  LOG     [Store] Fetching posts with params: "sortBy=latest"
+[00:02:11.890] Server  LOG     [API] Fetching: "http://localhost:3001/api/posts?sortBy=latest" "(server-side:" true ")"
+[00:02:11.910] Server  LOG     [API] Response status: 200 "OK:" true
+[00:02:11.911] Server  LOG     [API] Response data: "4 items"
+[00:02:11.911] Server  LOG     [Store] Received posts: 4 "posts"
+[00:02:12.031] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://localhost:3000/","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1769576773376}
+[00:02:13.883] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/blog/login color: rgb(120, 120, 120) color: inherit {"dp":"/blog/login","o":"http://localhost:3000/blog/login","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1769576775228}
+[00:02:15.829] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://localhost:3000/","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1769576777173}
+[00:02:19.885] Server  LOG     [API] Fetching: "http://localhost:3001/api/posts" "(server-side:" true ")"
+[00:02:19.906] Server  LOG     [API] Response status: 200 "OK:" true
+[00:02:19.907] Server  LOG     [API] Response data: "4 items"
+[00:02:20.023] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/blog/archive color: rgb(120, 120, 120) color: inherit {"dp":"/blog/archive","o":"http://localhost:3000/blog/archive","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1769576781368}
+[00:02:21.696] Server  LOG     [API] Fetching: "http://localhost:3001/api/posts/1111" "(server-side:" true ")"
+[00:02:21.703] Server  LOG     [API] Fetching: "http://localhost:3001/api/posts/1111" "(server-side:" true ")"
+[00:02:21.709] Server  LOG     [API] Response status: 200 "OK:" true
+[00:02:21.710] Server  LOG     [API] Response data: "data received"
+[00:02:21.711] Server  LOG     [API] Response status: 200 "OK:" true
+[00:02:21.712] Server  LOG     [API] Response data: "data received"
+[00:02:21.833] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/blog/posts/1111 color: rgb(120, 120, 120) color: inherit {"dp":"/blog/posts/[slug]","o":"http://localhost:3000/blog/posts/1111","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1769576783178}
+[00:02:25.754] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://localhost:3000/","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1769576787099}
+[00:02:27.782] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/admin color: rgb(120, 120, 120) color: inherit {"dp":"/admin","o":"http://localhost:3000/admin","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1769576789126}
+[00:02:36.363] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/admin/categories color: rgb(120, 120, 120) color: inherit {"dp":"/admin/categories","o":"http://localhost:3000/admin/categories","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1769576797709}
+[00:02:37.430] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/admin color: rgb(120, 120, 120) color: inherit {"dp":"/admin","o":"http://localhost:3000/admin","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1769576798774}
+[00:02:38.453] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/admin/categories color: rgb(120, 120, 120) color: inherit {"dp":"/admin/categories","o":"http://localhost:3000/admin/categories","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1769576799797}
+[00:02:38.778] Server  LOG     [Store] Fetching posts with params: "sortBy=latest"
+[00:02:38.778] Server  LOG     [API] Fetching: "http://localhost:3001/api/posts?sortBy=latest" "(server-side:" true ")"
+[00:02:38.808] Server  LOG     [API] Response status: 200 "OK:" true
+[00:02:38.809] Server  LOG     [API] Response data: "4 items"
+[00:02:38.809] Server  LOG     [Store] Received posts: 4 "posts"
+[00:02:38.935] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://localhost:3000/","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1769576800280}
+[00:02:40.784] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/blog/login color: rgb(120, 120, 120) color: inherit {"dp":"/blog/login","o":"http://localhost:3000/blog/login","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1769576802123}
+[00:02:42.356] Server  LOG     [Store] Fetching posts with params: "sortBy=latest"
+[00:02:42.356] Server  LOG     [API] Fetching: "http://localhost:3001/api/posts?sortBy=latest" "(server-side:" true ")"
+[00:02:42.374] Server  LOG     [API] Response status: 200 "OK:" true
+[00:02:42.375] Server  LOG     [API] Response data: "4 items"
+[00:02:42.375] Server  LOG     [Store] Received posts: 4 "posts"
+[00:02:42.499] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://localhost:3000/","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1769576803845}
+[00:02:44.098] Server  LOG     [Store] Fetching posts with params: "sortBy=latest"
+[00:02:44.098] Server  LOG     [API] Fetching: "http://localhost:3001/api/posts?sortBy=latest" "(server-side:" true ")"
+[00:02:44.112] Server  LOG     [API] Response status: 200 "OK:" true
+[00:02:44.113] Server  LOG     [API] Response data: "4 items"
+[00:02:44.113] Server  LOG     [Store] Received posts: 4 "posts"
