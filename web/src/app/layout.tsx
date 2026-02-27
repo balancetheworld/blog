@@ -18,8 +18,8 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: {
-    template: '%s - Alex\'s Space',
-    default: 'Alex\'s Space',
+    template: '%s - Caitria\'s Space',
+    default: 'Caitria\'s Space',
   },
   description: 'A personal blog about code, design, and life.',
 }

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import useSWR from "swr"
 import {
   FileText, MessageCircle, Plus, Pencil, Trash2,
-  LogOut, Loader2, ChevronDown, ChevronUp, Eye, Code, X, Tag, ImageIcon
+  LogOut, Loader2, ChevronDown, ChevronUp, Eye, Code, X, Tag, ImageIcon, Pin, PinOff
 } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
 import { useI18n } from "@/lib/i18n-context"
@@ -24,16 +24,22 @@ function ArticleEditor({
   onSaved: () => void
 }) {
   const isEdit = !!article
+
+  // Extract translations from article
+  const translations = article?.translations as Array<{ lang: string; title: string; summary: string; content: string }> | undefined
+  const transEn = translations?.find(t => t.lang === 'en')
+  const transZh = translations?.find(t => t.lang === 'zh')
+
   const [type, setType] = useState<string>((article?.type as string) || "post")
   const [slug, setSlug] = useState((article?.slug as string) || "")
   const [category, setCategory] = useState((article?.category as string) || "")
   const [coverImage, setCoverImage] = useState((article?.cover_image as string) || "")
-  const [titleEn, setTitleEn] = useState((article?.title_en as string) || "")
-  const [summaryEn, setSummaryEn] = useState((article?.summary_en as string) || "")
-  const [contentEn, setContentEn] = useState((article?.content_en as string) || "")
-  const [titleZh, setTitleZh] = useState((article?.title_zh as string) || "")
-  const [summaryZh, setSummaryZh] = useState((article?.summary_zh as string) || "")
-  const [contentZh, setContentZh] = useState((article?.content_zh as string) || "")
+  const [titleEn, setTitleEn] = useState(transEn?.title || "")
+  const [summaryEn, setSummaryEn] = useState(transEn?.summary || "")
+  const [contentEn, setContentEn] = useState(transEn?.content || "")
+  const [titleZh, setTitleZh] = useState(transZh?.title || "")
+  const [summaryZh, setSummaryZh] = useState(transZh?.summary || "")
+  const [contentZh, setContentZh] = useState(transZh?.content || "")
   const [articleTags, setArticleTags] = useState<string[]>((article?.tags as string[]) || [])
   const [tagInput, setTagInput] = useState("")
   const [saving, setSaving] = useState(false)
@@ -298,15 +304,28 @@ function ArticleEditor({
 // --- Recently Editor ---
 function RecentlyEditor({ onClose, onSaved }: { onClose: () => void; onSaved: () => void }) {
   const [content, setContent] = useState("")
-  const [imageUrl, setImageUrl] = useState("")
+  const [images, setImages] = useState<string[]>([])
+  const [currentImageUrl, setCurrentImageUrl] = useState("")
   const [saving, setSaving] = useState(false)
+
+  const addImage = () => {
+    if (currentImageUrl.trim() && !images.includes(currentImageUrl.trim())) {
+      setImages([...images, currentImageUrl.trim()])
+      setCurrentImageUrl("")
+    }
+  }
+
+  const removeImage = (index: number) => {
+    setImages(images.filter((_, i) => i !== index))
+  }
 
   const handleSave = async () => {
     setSaving(true)
     try {
       const result = await api.post<any>('/api/admin/recently', {
         content,
-        image_url: imageUrl || null,
+        images: images.length > 0 ? images : undefined,
+        image_url: images.length > 0 ? images[0] : undefined, // For backward compatibility
       })
       if (result.success) {
         setSaving(false)
@@ -324,7 +343,7 @@ function RecentlyEditor({ onClose, onSaved }: { onClose: () => void; onSaved: ()
 
   return (
     <div className="fixed inset-0 z-[70] flex items-center justify-center bg-foreground/20 backdrop-blur-sm">
-      <div className="glass-card mx-4 w-full max-w-md p-6">
+      <div className="glass-card mx-4 w-full max-w-md p-6 max-h-[90vh] overflow-y-auto">
         <h2 className="text-lg font-semibold text-foreground mb-4">New Thought</h2>
         <textarea
           value={content}
@@ -334,28 +353,54 @@ function RecentlyEditor({ onClose, onSaved }: { onClose: () => void; onSaved: ()
           placeholder="What's on your mind..."
           autoFocus
         />
-        <div className="mt-3 flex flex-col gap-1.5">
+
+        {/* Images section */}
+        <div className="mt-3 flex flex-col gap-2">
           <label className="text-xs font-medium text-muted-foreground flex items-center gap-1">
             <ImageIcon className="h-3 w-3" />
-            Image URL (optional)
+            Images ({images.length})
           </label>
-          <input
-            value={imageUrl}
-            onChange={(e) => setImageUrl(e.target.value)}
-            className="rounded-lg border border-border bg-background/50 px-3 py-2 text-sm outline-none focus:border-primary"
-            placeholder="https://example.com/photo.jpg"
-          />
-          {imageUrl && (
-            <div className="mt-1 overflow-hidden rounded-lg border border-border">
-              <img
-                src={imageUrl}
-                alt="Preview"
-                className="h-28 w-full object-cover"
-                onError={(e) => { (e.target as HTMLImageElement).style.display = "none" }}
-              />
+
+          {/* Add image input */}
+          <div className="flex gap-2">
+            <input
+              value={currentImageUrl}
+              onChange={(e) => setCurrentImageUrl(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addImage())}
+              className="flex-1 rounded-lg border border-border bg-background/50 px-3 py-2 text-sm outline-none focus:border-primary"
+              placeholder="https://example.com/photo.jpg"
+            />
+            <button
+              onClick={addImage}
+              disabled={!currentImageUrl.trim()}
+              className="rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-50"
+            >
+              Add
+            </button>
+          </div>
+
+          {/* Images grid */}
+          {images.length > 0 && (
+            <div className="grid grid-cols-3 gap-2 mt-2">
+              {images.map((img, index) => (
+                <div key={index} className="relative group aspect-square">
+                  <img
+                    src={img}
+                    alt={`Image ${index + 1}`}
+                    className="w-full h-full object-cover rounded-lg border border-border"
+                  />
+                  <button
+                    onClick={() => removeImage(index)}
+                    className="absolute top-1 right-1 rounded-full bg-red-500 p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <X className="h-3 w-3 text-white" />
+                  </button>
+                </div>
+              ))}
             </div>
           )}
         </div>
+
         <div className="mt-4 flex justify-end gap-2">
           <button onClick={onClose} className="rounded-lg px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors">Cancel</button>
           <button onClick={handleSave} disabled={saving || !content.trim()} className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-50">
@@ -434,6 +479,19 @@ export default function AdminPage() {
     }
   }
 
+  const handleTogglePin = async (id: number) => {
+    try {
+      const result = await api.patch<any>(`/api/admin/articles/${id}/pin`)
+      if (result.success) {
+        mutateArticles()
+      } else {
+        alert(`Toggle pin failed: ${result.error || 'Unknown error'}`)
+      }
+    } catch (error: any) {
+      alert(`Toggle pin failed: ${error?.error || 'Network error'}`)
+    }
+  }
+
   const handleLogout = async () => {
     await logout()
     router.push("/")
@@ -493,6 +551,11 @@ export default function AdminPage() {
 
           <div className="flex flex-col gap-2">
             {articles.map((a: Record<string, unknown>) => {
+              // Extract titles from translations array
+              const translations = a.translations as Array<{ lang: string; title: string; summary: string }> | undefined
+              const titleEn = translations?.find(t => t.lang === 'en')?.title
+              const titleZh = translations?.find(t => t.lang === 'zh')?.title
+
               const key = `${a.type}-${a.id}`
               const isOpen = expandedId === key
               return (
@@ -509,7 +572,7 @@ export default function AdminPage() {
                             {a.type as string}
                           </span>
                           <span className="text-sm font-medium text-foreground truncate">
-                            {(a.title_zh as string) || (a.title_en as string) || "Untitled"}
+                            {titleZh || titleEn || "Untitled"}
                           </span>
                         </div>
                         {a.slug && (
@@ -518,6 +581,19 @@ export default function AdminPage() {
                       </div>
                     </button>
                     <div className="flex items-center gap-1 shrink-0 ml-2">
+                      {a.type === "post" && (
+                        <button
+                          onClick={() => handleTogglePin(a.id as number)}
+                          className={`rounded-md p-1.5 transition-colors ${
+                            (a.is_pinned as number) === 1
+                              ? "text-primary hover:text-primary/80 hover:bg-primary/10"
+                              : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                          }`}
+                          aria-label={(a.is_pinned as number) === 1 ? "Unpin" : "Pin"}
+                        >
+                          {(a.is_pinned as number) === 1 ? <Pin className="h-3.5 w-3.5 fill-current" /> : <Pin className="h-3.5 w-3.5" />}
+                        </button>
+                      )}
                       <button
                         onClick={() => setEditingArticle(a)}
                         className="rounded-md p-1.5 text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
@@ -537,8 +613,8 @@ export default function AdminPage() {
                   {isOpen && (
                     <div className="border-t border-border px-4 py-3 text-xs text-muted-foreground">
                       <div className="grid grid-cols-2 gap-2">
-                        <div><span className="font-medium">EN:</span> {(a.title_en as string) || "-"}</div>
-                        <div><span className="font-medium">ZH:</span> {(a.title_zh as string) || "-"}</div>
+                        <div><span className="font-medium">EN:</span> {titleEn || "-"}</div>
+                        <div><span className="font-medium">ZH:</span> {titleZh || "-"}</div>
                       </div>
                       {a.category && <div className="mt-1">Category: {a.category as string}</div>}
                       {Array.isArray(a.tags) && (a.tags as string[]).length > 0 && (
@@ -580,23 +656,43 @@ export default function AdminPage() {
           </div>
 
           <div className="flex flex-col gap-2">
-            {recentlyItems.map((item: Record<string, unknown>) => (
-              <div key={item.id as number} className="glass-card flex items-start justify-between gap-3 px-4 py-3">
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm text-foreground">{item.content as string}</p>
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    {new Date(item.created_at as string).toLocaleString()}
-                  </p>
+            {recentlyItems.map((item: Record<string, unknown>) => {
+              const images = item.images as Array<{ image_url: string }> | undefined
+              const imageUrl = item.image_url as string | null
+              const firstImage = images && images.length > 0 ? images[0].image_url : imageUrl
+
+              return (
+                <div key={item.id as number} className="glass-card flex items-start justify-between gap-3 px-4 py-3">
+                  {firstImage && (
+                    <div className="shrink-0">
+                      <img
+                        src={firstImage}
+                        alt=""
+                        className="h-12 w-12 rounded-md object-cover border border-border"
+                      />
+                    </div>
+                  )}
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm text-foreground">{item.content as string}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      {new Date(item.created_at as string).toLocaleString()}
+                      {images && images.length > 1 && (
+                        <span className="ml-2 text-primary">
+                          +{images.length} {images.length === 1 ? 'image' : 'images'}
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => handleDeleteRecently(item.id as number)}
+                    className="shrink-0 rounded-md p-1.5 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                    aria-label="Delete"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </button>
                 </div>
-                <button
-                  onClick={() => handleDeleteRecently(item.id as number)}
-                  className="shrink-0 rounded-md p-1.5 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
-                  aria-label="Delete"
-                >
-                  <Trash2 className="h-3.5 w-3.5" />
-                </button>
-              </div>
-            ))}
+              )
+            })}
             {recentlyItems.length === 0 && (
               <div className="glass-card flex items-center justify-center py-12 text-sm text-muted-foreground">
                 No thoughts yet. Share what is on your mind!

@@ -4,6 +4,6 @@ import { config } from '../config'
 export const corsMiddleware = cors({
   origin: config.corsOrigin,
   credentials: true,
-  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowMethods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowHeaders: ['Content-Type', 'Authorization'],
 })

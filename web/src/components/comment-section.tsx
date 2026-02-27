@@ -95,7 +95,7 @@ export function CommentSection({ articleType, articleId }: CommentSectionProps) 
       {/* Comment input */}
       {isAuthenticated ? (
         <form onSubmit={handleSubmit} className="mb-6">
-          <div className="glass-card overflow-hidden">
+          <div className="glass-card-static overflow-hidden">
             <div className="flex items-center gap-2 border-b border-border px-4 py-2.5">
               <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 text-[10px] font-bold text-primary">
                 {user?.displayName?.charAt(0)?.toUpperCase() || "U"}
@@ -122,7 +122,7 @@ export function CommentSection({ articleType, articleId }: CommentSectionProps) 
           </div>
         </form>
       ) : (
-        <div className="mb-6 glass-card flex items-center justify-center py-6">
+        <div className="mb-6 glass-card-static flex items-center justify-center py-6">
           <Link
             href="/login"
             className="text-sm text-muted-foreground hover:text-primary transition-colors"
@@ -140,7 +140,7 @@ export function CommentSection({ articleType, articleId }: CommentSectionProps) 
       ) : (
         <div className="flex flex-col gap-3">
           {comments.map((comment) => (
-            <div key={comment.id} className="glass-card px-4 py-3">
+            <div key={comment.id} className="glass-card-static px-4 py-3">
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-center gap-2 min-w-0">
                   <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
@@ -171,7 +171,7 @@ export function CommentSection({ articleType, articleId }: CommentSectionProps) 
                   </button>
                 )}
               </div>
-              <p className="mt-2 text-sm text-foreground/80 leading-relaxed whitespace-pre-wrap">
+              <p className="mt-2 text-sm text-foreground/95 leading-relaxed whitespace-pre-wrap">
                 {comment.content}
               </p>
             </div>

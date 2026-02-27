@@ -1,7 +1,7 @@
 export default {
   // Site
   site: {
-    title: 'Alex的空间',
+    title: 'Caitria的空间',
   },
 
   // Navigation
@@ -17,7 +17,7 @@ export default {
   section: {
     articles: '文章',
     notes: '笔记',
-    recently: '最近动态',
+    recently: '随心记',
     recently_viewAll: '查看全部',
     notes_viewAll: '查看全部',
   },
@@ -46,14 +46,14 @@ export default {
 
   // Hero
   hero: {
-    name: '亚历克斯',
+    name: 'Caitria',
     tagline: '欢迎来到我的空间',
   },
 
   // About
   about: {
     title: '关于',
-    content: '一位热爱构建美好 Web 体验的开发者。',
+    content: '你好，我是小周，正在努力成为厉害的前端工程师',
   },
 
   // Admin

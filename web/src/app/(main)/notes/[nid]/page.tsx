@@ -40,7 +40,7 @@ export default function NoteDetailPage() {
   if (isLoading) {
     return (
       <main className="mx-auto max-w-2xl px-6 py-8">
-        <div className="animate-pulse glass-card p-8">
+        <div className="animate-pulse glass-card-static p-8">
           <div className="h-7 w-2/3 rounded bg-muted" />
           <div className="mt-4 h-4 w-24 rounded bg-muted" />
           <div className="mt-8 space-y-3">
@@ -86,7 +86,7 @@ export default function NoteDetailPage() {
           {t("blog.back")}
         </Link>
 
-        <div className="glass-card mt-6 p-6 md:p-8">
+        <div className="glass-card-static mt-6 p-6 md:p-8">
           <header>
             <div className="mb-2 flex items-center gap-2">
               <span className="inline-block rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">

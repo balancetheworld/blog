@@ -19,9 +19,10 @@ export const recentlyController = {
   },
 
   create: async (ctx: Context) => {
-    const { content, image_url } = ctx.request.body as {
+    const { content, image_url, images } = ctx.request.body as {
       content: string
       image_url?: string
+      images?: string[]
     }
 
     if (!content) {
@@ -34,7 +35,7 @@ export const recentlyController = {
     }
 
     try {
-      const item = RecentlyService.create(content, image_url)
+      const item = RecentlyService.create(content, image_url, images)
       ctx.body = {
         success: true,
         data: item,

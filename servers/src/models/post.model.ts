@@ -6,6 +6,7 @@ export interface Post {
   category: string
   cover_image: string | null
   view_count: number
+  is_pinned: number
   created_at: string
   updated_at: string
 }
@@ -54,9 +55,9 @@ export const PostModel = {
     query += ' GROUP BY p.id'
 
     if (params.sort === 'popular') {
-      query += ' ORDER BY p.view_count DESC'
+      query += ' ORDER BY p.is_pinned DESC, p.view_count DESC'
     } else {
-      query += ' ORDER BY p.created_at DESC'
+      query += ' ORDER BY p.is_pinned DESC, p.created_at DESC'
     }
 
     const posts = db.prepare(query).all(...queryParams) as (Post & { tags: string })[]
@@ -203,5 +204,19 @@ export const PostModel = {
     const db = getDatabase()
     const result = db.prepare('SELECT COUNT(*) as count FROM likes WHERE article_type = ? AND article_id = ?').get('post', postId) as { count: number }
     return result.count
+  },
+
+  togglePin: (id: number): PostWithTranslations => {
+    const db = getDatabase()
+    const post = db.prepare('SELECT * FROM posts WHERE id = ?').get(id) as Post | undefined
+
+    if (!post) {
+      throw new Error('Post not found')
+    }
+
+    const newPinnedState = post.is_pinned === 0 ? 1 : 0
+    db.prepare('UPDATE posts SET is_pinned = ? WHERE id = ?').run(newPinnedState, id)
+
+    return PostModel.findById(id) as PostWithTranslations
   },
 }

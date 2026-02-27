@@ -56,10 +56,11 @@ adminRouter.use(authMiddleware)
 adminRouter.use(adminMiddleware)
 
 // Articles
-adminRouter.get('/articles', articleController.getArticles)  // 添加这个
+adminRouter.get('/articles', articleController.getAllForAdmin)  // 管理页面：获取 posts + notes
 adminRouter.post('/articles', articleController.createArticle)
 adminRouter.put('/articles/:id', articleController.updateArticle)
 adminRouter.delete('/articles/:id', articleController.deleteArticle)
+adminRouter.patch('/articles/:id/pin', articleController.togglePin)  // 置顶/取消置顶
 
 // Notes
 adminRouter.get('/notes', noteController.getNotes)  // 添加这个

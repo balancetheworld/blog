@@ -46,7 +46,7 @@ export function PostDetail() {
   if (isLoading) {
     return (
       <div className="animate-pulse py-8">
-        <div className="glass-card p-8">
+        <div className="glass-card-static p-8">
           <div className="h-8 w-3/4 rounded bg-muted" />
           <div className="mt-4 h-4 w-32 rounded bg-muted" />
           <div className="mt-8 space-y-3">
@@ -89,7 +89,7 @@ export function PostDetail() {
         {t("blog.back")}
       </Link>
 
-      <div className="glass-card mt-6 p-6 md:p-8">
+      <div className="glass-card-static mt-6 p-6 md:p-8">
         <header>
           <h1 className="text-2xl font-bold tracking-tight text-foreground text-balance md:text-3xl">
             {translation.title}

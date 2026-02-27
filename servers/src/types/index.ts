@@ -25,6 +25,7 @@ export interface Post {
   category: string
   cover_image: string | null
   view_count: number
+  is_pinned: number
   created_at: string
   updated_at: string
 }

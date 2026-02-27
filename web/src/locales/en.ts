@@ -1,7 +1,7 @@
 export default {
   // Site
   site: {
-    title: "Alex's Space",
+    title: "Caitria's Space",
   },
 
   // Navigation
@@ -46,14 +46,14 @@ export default {
 
   // Hero
   hero: {
-    name: 'Alex Chen',
+    name: 'Caitria',
     tagline: 'Welcome to my space',
   },
 
   // About
   about: {
     title: 'About',
-    content: 'A developer passionate about building beautiful web experiences.',
+    content: 'A frontend engineer .',
   },
 
   // Admin

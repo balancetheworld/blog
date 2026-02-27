@@ -148,4 +148,13 @@ export const ArticleService = {
   incrementViewCount: (id: number) => {
     PostModel.incrementViewCount(id)
   },
+
+  togglePinArticle: (id: number) => {
+    const post = PostModel.findById(id)
+    if (!post) {
+      throw new Error('Article not found')
+    }
+
+    return PostModel.togglePin(id)
+  },
 }

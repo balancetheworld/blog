@@ -34,6 +34,7 @@ function initTables(database: Database.Database): void {
       category TEXT DEFAULT 'default',
       cover_image TEXT,
       view_count INTEGER DEFAULT 0,
+      is_pinned INTEGER DEFAULT 0,
       created_at TEXT NOT NULL,
       updated_at TEXT NOT NULL
     );
@@ -71,6 +72,15 @@ function initTables(database: Database.Database): void {
       content TEXT NOT NULL,
       image_url TEXT,
       created_at TEXT NOT NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS recently_images (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      recently_id INTEGER NOT NULL,
+      image_url TEXT NOT NULL,
+      sort_order INTEGER DEFAULT 0,
+      created_at TEXT NOT NULL,
+      FOREIGN KEY (recently_id) REFERENCES recently(id) ON DELETE CASCADE
     );
 
     CREATE TABLE IF NOT EXISTS profile (
@@ -144,8 +154,28 @@ function initTables(database: Database.Database): void {
     );
   `)
 
+  // 数据库迁移：为现有表添加 is_pinned 字段
+  migrateDatabase(database)
+
   // 初始化种子数据
   seedData(database)
+}
+
+// 数据库迁移函数
+function migrateDatabase(database: Database.Database): void {
+  try {
+    // 检查 posts 表是否有 is_pinned 列
+    const columns = database.prepare("PRAGMA table_info(posts)").all() as Array<{ name: string }>
+    const hasPinnedColumn = columns.some((col) => col.name === 'is_pinned')
+
+    if (!hasPinnedColumn) {
+      // 添加 is_pinned 列
+      database.prepare('ALTER TABLE posts ADD COLUMN is_pinned INTEGER DEFAULT 0').run()
+      console.log('Database migration: Added is_pinned column to posts table')
+    }
+  } catch (error) {
+    console.error('Database migration error:', error)
+  }
 }
 
 function seedData(database: Database.Database): void {
@@ -165,7 +195,7 @@ function seedData(database: Database.Database): void {
   // Profile
   database.prepare(
     `INSERT INTO profile (id, name, username, avatar, introduce, github, twitter, email)
-     VALUES (1, 'Alex Chen', 'alexchen', NULL, 'A developer passionate about building beautiful web experiences.', 'https://github.com', 'https://twitter.com', 'hello@example.com')`
+     VALUES (1, 'Caitria', 'caitria', NULL, 'A developer passionate about building beautiful web experiences.', 'https://github.com', 'https://twitter.com', 'hello@example.com')`
   ).run()
 
   // Import seed data from existing lib/sqlite.ts
