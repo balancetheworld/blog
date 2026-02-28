@@ -55,6 +55,7 @@ export const ArticleService = {
       slug: data.slug,
       category: data.category,
       cover_image: data.cover_image || null,
+      is_pinned: 0,
     })
 
     // Create translations

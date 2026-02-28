@@ -1,0 +1,49 @@
+# Docker Compose 配置
+# =====================================
+
+services:
+  # 前端服务
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    container_name: blog-web
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - servers
+    restart: unless-stopped
+    networks:
+      - blog-network
+
+  # 后端服务
+  servers:
+    build:
+      context: ./servers
+      dockerfile: Dockerfile
+    container_name: blog-servers
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - CORS_ORIGIN=http://localhost:3000
+      - DATABASE_PATH=/app/database/blog.db
+    volumes:
+      # 持久化数据库
+      - blog-data:/app/database
+    restart: unless-stopped
+    networks:
+      - blog-network
+
+# 数据卷
+volumes:
+  blog-data:
+    driver: local
+
+# 网络
+networks:
+  blog-network:
+    driver: bridge

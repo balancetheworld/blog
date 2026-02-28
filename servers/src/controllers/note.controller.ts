@@ -49,7 +49,13 @@ export const noteController = {
   },
 
   createNote: async (ctx: Context) => {
-    const data = ctx.request.body
+    const data = ctx.request.body as {
+      nid: number
+      title_en: string
+      title_zh: string
+      content_en: string
+      content_zh: string
+    }
 
     try {
       const note = NoteService.createNote(data)
@@ -68,7 +74,13 @@ export const noteController = {
 
   updateNote: async (ctx: Context) => {
     const { id } = ctx.params
-    const data = ctx.request.body
+    const data = ctx.request.body as {
+      nid?: number
+      title_en?: string
+      title_zh?: string
+      content_en?: string
+      content_zh?: string
+    }
 
     try {
       const note = NoteService.updateNote(Number(id), data)

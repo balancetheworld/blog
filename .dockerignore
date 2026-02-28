@@ -1,0 +1,42 @@
+# Docker 忽略文件
+# =====================================
+
+# 依赖
+node_modules
+npm-debug.log
+yarn-error.log
+pnpm-debug.log
+
+# 构建产物
+.next
+out
+dist
+build
+
+# 开发文件
+.env.local
+.env.*.local
+.git
+.gitignore
+README.md
+DS_Store
+*.log
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# 测试
+coverage
+.nyc_output
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# 其他
+.claude
+.spec-workflow

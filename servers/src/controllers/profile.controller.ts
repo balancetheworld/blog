@@ -19,7 +19,15 @@ export const profileController = {
   },
 
   update: async (ctx: Context) => {
-    const data = ctx.request.body
+    const data = ctx.request.body as {
+      name?: string
+      username?: string
+      avatar?: string
+      introduce?: string
+      github?: string
+      twitter?: string
+      email?: string
+    }
 
     try {
       const profile = ProfileService.update(data)

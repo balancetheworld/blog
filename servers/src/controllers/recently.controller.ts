@@ -51,7 +51,11 @@ export const recentlyController = {
 
   update: async (ctx: Context) => {
     const { id } = ctx.params
-    const data = ctx.request.body
+    const data = ctx.request.body as {
+      content?: string
+      image_url?: string
+      images?: string[]
+    }
 
     try {
       const item = RecentlyService.update(Number(id), data)

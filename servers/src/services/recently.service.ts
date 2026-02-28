@@ -30,7 +30,9 @@ export const RecentlyService = {
       throw new Error('Thought not found')
     }
 
-    RecentlyModel.update(id, data, data.images)
+    // Extract images for separate handling
+    const { images, ...itemData } = data
+    RecentlyModel.update(id, itemData, images)
     return RecentlyModel.findById(id)
   },
 

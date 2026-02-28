@@ -87,7 +87,18 @@ export const articleController = {
   },
 
   createArticle: async (ctx: Context) => {
-    const data = ctx.request.body
+    const data = ctx.request.body as {
+      slug: string
+      category: string
+      title_en: string
+      title_zh: string
+      summary_en: string
+      summary_zh: string
+      content_en: string
+      content_zh: string
+      tags?: string[]
+      cover_image?: string
+    }
 
     try {
       const article = ArticleService.createArticle(data)
@@ -106,7 +117,18 @@ export const articleController = {
 
   updateArticle: async (ctx: Context) => {
     const { id } = ctx.params
-    const data = ctx.request.body
+    const data = ctx.request.body as {
+      slug?: string
+      category?: string
+      title_en?: string
+      title_zh?: string
+      summary_en?: string
+      summary_zh?: string
+      content_en?: string
+      content_zh?: string
+      tags?: string[]
+      cover_image?: string
+    }
 
     try {
       const article = ArticleService.updateArticle(Number(id), data)

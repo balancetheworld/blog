@@ -52,7 +52,12 @@ export const categoryController = {
 
   update: async (ctx: Context) => {
     const { id } = ctx.params
-    const data = ctx.request.body
+    const data = ctx.request.body as {
+      slug?: string
+      name_en?: string
+      name_zh?: string
+      sort_order?: number
+    }
 
     try {
       const category = CategoryService.update(Number(id), data)
