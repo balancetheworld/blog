@@ -8,3 +8,37 @@ node_modules/
 .next/
 .env*.local
 .DS_Store
+
+# Database files (CRITICAL: Never commit databases to public repos!)
+*.db
+*.sqlite
+*.sqlite3
+*.db-shm
+*.db-wal
+servers/database/*.db
+
+# Environment files with sensitive data
+.env
+.env.*
+!.env.example
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build outputs
+dist/
+build/
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
