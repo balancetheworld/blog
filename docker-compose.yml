@@ -30,7 +30,7 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=3001
-      - CORS_ORIGIN=http://localhost:3000
+      - CORS_ORIGIN=https://blog.smob.cc
       - DATABASE_PATH=/app/database/blog.db
     volumes:
       # 持久化数据库
