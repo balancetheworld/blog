@@ -13,8 +13,8 @@ FROM node:24-alpine AS builder
 # Set working directory
 WORKDIR /app
 
-# Enable pnpm via Corepack
-RUN corepack enable && corepack prepare pnpm@latest --activate
+# Enable pnpm via Corepack (使用固定版本避免网络问题)
+RUN corepack enable && corepack prepare pnpm@10 --activate
 
 # Copy package files (independent project, no workspace)
 COPY package.json ./
@@ -41,8 +41,8 @@ ENV NODE_ENV=production \
 
 WORKDIR /app
 
-# Enable pnpm via Corepack (not strictly needed in runner)
-RUN corepack enable && corepack prepare pnpm@latest --activate
+# Enable pnpm via Corepack (使用固定版本避免网络问题)
+RUN corepack enable && corepack prepare pnpm@10 --activate
 
 # Create non-root user for security
 RUN addgroup -S nodejs && \

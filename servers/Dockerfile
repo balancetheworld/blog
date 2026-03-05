@@ -13,8 +13,8 @@ FROM node:20-alpine AS deps
 # Set working directory
 WORKDIR /app
 
-# Enable pnpm via Corepack
-RUN corepack enable && corepack prepare pnpm@latest --activate
+# Enable pnpm via Corepack (使用固定版本避免网络问题)
+RUN corepack enable && corepack prepare pnpm@10 --activate
 
 # Install build tools for native modules (better-sqlite3)
 RUN apk add --no-cache python3 make g++ sqlite
@@ -39,8 +39,8 @@ FROM node:20-alpine AS builder
 # Set working directory
 WORKDIR /app
 
-# Enable pnpm via Corepack
-RUN corepack enable && corepack prepare pnpm@latest --activate
+# Enable pnpm via Corepack (使用固定版本避免网络问题)
+RUN corepack enable && corepack prepare pnpm@10 --activate
 
 # Copy compiled dependencies from deps stage
 COPY --from=deps /app/node_modules ./node_modules
@@ -67,8 +67,8 @@ WORKDIR /app
 # Install runtime dependencies
 RUN apk add --no-cache libc6-compat sqlite
 
-# Enable pnpm via Corepack
-RUN corepack enable && corepack prepare pnpm@latest --activate
+# Enable pnpm via Corepack (使用固定版本避免网络问题)
+RUN corepack enable && corepack prepare pnpm@10 --activate
 
 # Copy package.json for metadata
 COPY package.json ./
