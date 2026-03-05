@@ -36,7 +36,8 @@ FROM node:24-alpine AS runner
 # Set production environment
 ENV NODE_ENV=production \
     PORT=3000 \
-    HOSTNAME="0.0.0.0"
+    HOSTNAME="0.0.0.0" \
+    BACKEND_URL=http://servers:3001
 
 WORKDIR /app
 
