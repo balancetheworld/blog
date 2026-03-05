@@ -12,6 +12,7 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=production
+      - BACKEND_URL=http://servers:3001
     depends_on:
       - servers
     restart: unless-stopped
