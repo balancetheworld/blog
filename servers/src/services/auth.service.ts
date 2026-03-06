@@ -41,11 +41,18 @@ export const AuthService = {
     // Find user
     const user = UserModel.findByUsername(username)
     if (!user) {
+      console.log('[LOGIN] User not found:', username)
       throw new Error('Invalid credentials')
     }
 
     // Verify password
     const passwordHash = await hashPassword(password)
+    console.log('[LOGIN] Password verification:', {
+      username,
+      inputHash: passwordHash,
+      storedHash: user.password_hash,
+      match: passwordHash === user.password_hash
+    })
     if (passwordHash !== user.password_hash) {
       throw new Error('Invalid credentials')
     }
