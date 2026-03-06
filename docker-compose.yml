@@ -32,6 +32,7 @@ services:
       - PORT=3001
       - CORS_ORIGIN=https://blog.smob.cc
       - DATABASE_PATH=/app/database/blog.db
+      - FORCE_HTTPS=true
     volumes:
       # 持久化数据库
       - blog-data:/app/database

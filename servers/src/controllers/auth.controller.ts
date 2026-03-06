@@ -3,12 +3,41 @@ import { AuthService } from '../services/auth.service'
 
 // 检查请求是否来自 HTTPS（考虑反向代理）
 function isSecureRequest(ctx: Context): boolean {
-  // 检查 X-Forwarded-Proto 头（由反向代理设置）
+  // 1. 优先检查 X-Forwarded-Proto 头（由标准反向代理设置）
   const proto = ctx.get('X-Forwarded-Proto')
   if (proto) {
     return proto === 'https'
   }
-  // 回退到检查 NODE_ENV（仅用于直接连接）
+
+  // 2. 检查 Cloudflare 头
+  const cfVisitor = ctx.get('CF-Visitor')
+  if (cfVisitor) {
+    try {
+      const visitor = JSON.parse(cfVisitor)
+      return visitor.scheme === 'https'
+    } catch {
+      // 解析失败，继续其他检查
+    }
+  }
+
+  // 3. 检查 X-Forwarded-SSL（一些反向代理使用这个）
+  const forwardedSsl = ctx.get('X-Forwarded-SSL')
+  if (forwardedSsl) {
+    return forwardedSsl === 'on' || forwardedSsl === '1'
+  }
+
+  // 4. 检查 Front-End-Https（微软 IIS 使用）
+  const feHttps = ctx.get('Front-End-Https')
+  if (feHttps) {
+    return feHttps.toLowerCase() === 'on'
+  }
+
+  // 5. 环境变量显式设置（最高优先级覆盖）
+  if (process.env.FORCE_HTTPS === 'true') {
+    return true
+  }
+
+  // 6. 回退到检查 NODE_ENV（仅用于直接连接）
   return process.env.NODE_ENV === 'production'
 }
 
