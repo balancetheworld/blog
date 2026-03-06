@@ -1,6 +1,17 @@
 import type { Context } from 'koa'
 import { AuthService } from '../services/auth.service'
 
+// 检查请求是否来自 HTTPS（考虑反向代理）
+function isSecureRequest(ctx: Context): boolean {
+  // 检查 X-Forwarded-Proto 头（由反向代理设置）
+  const proto = ctx.get('X-Forwarded-Proto')
+  if (proto) {
+    return proto === 'https'
+  }
+  // 回退到检查 NODE_ENV（仅用于直接连接）
+  return process.env.NODE_ENV === 'production'
+}
+
 export const authController = {
   register: async (ctx: Context) => {
     const { username, password, displayName } = ctx.request.body as {
@@ -21,10 +32,9 @@ export const authController = {
       // Set cookie
       ctx.cookies.set('blog_session', result.token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
+        secure: isSecureRequest(ctx),
         sameSite: 'lax',
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-        domain: process.env.COOKIE_DOMAIN || 'localhost',
       })
 
       ctx.body = {
@@ -57,10 +67,9 @@ export const authController = {
       // Set cookie
       ctx.cookies.set('blog_session', result.token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
+        secure: isSecureRequest(ctx),
         sameSite: 'lax',
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-        domain: process.env.COOKIE_DOMAIN || 'localhost',
       })
 
       ctx.body = {
@@ -88,10 +97,9 @@ export const authController = {
 
     ctx.cookies.set('blog_session', '', {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: isSecureRequest(ctx),
       sameSite: 'lax',
       maxAge: 0,
-      domain: process.env.COOKIE_DOMAIN || 'localhost',
     })
 
     ctx.body = {
