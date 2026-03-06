@@ -82,16 +82,20 @@ export const authController = {
   },
 
   login: async (ctx: Context) => {
+    console.log('[CONTROLLER] Login request received, body:', ctx.request.body)
     const { username, password } = ctx.request.body as { username: string; password: string }
 
     if (!username || !password) {
+      console.log('[CONTROLLER] Missing username or password')
       ctx.status = 400
       ctx.body = { success: false, error: 'Missing username or password' }
       return
     }
 
     try {
+      console.log('[CONTROLLER] Calling AuthService.login')
       const result = await AuthService.login(username, password)
+      console.log('[CONTROLLER] AuthService.login returned:', result)
 
       // Set cookie
       ctx.cookies.set('blog_session', result.token, {
@@ -110,6 +114,7 @@ export const authController = {
         },
       }
     } catch (error) {
+      console.log('[CONTROLLER] Error caught:', error)
       ctx.status = 401
       ctx.body = {
         success: false,

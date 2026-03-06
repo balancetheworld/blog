@@ -38,6 +38,8 @@ export const AuthService = {
   },
 
   login: async (username: string, password: string): Promise<{ userId: number; token: string; displayName: string; role: string }> => {
+    console.log('[LOGIN] Starting login for username:', username)
+
     // Find user
     const user = UserModel.findByUsername(username)
     if (!user) {
@@ -54,6 +56,7 @@ export const AuthService = {
       match: passwordHash === user.password_hash
     })
     if (passwordHash !== user.password_hash) {
+      console.log('[LOGIN] Password mismatch - throwing Invalid credentials')
       throw new Error('Invalid credentials')
     }
 
@@ -65,6 +68,7 @@ export const AuthService = {
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() // 7 days
     UserModel.createSession(user.id, token, expiresAt)
 
+    console.log('[LOGIN] Session created successfully, returning result')
     return {
       userId: user.id,
       token,
