@@ -1,45 +1,10 @@
 import type { Context } from 'koa'
 import { AuthService } from '../services/auth.service'
 
-// 检查请求是否来自 HTTPS（考虑反向代理）
-function isSecureRequest(ctx: Context): boolean {
-  // 0. 环境变量显式设置（最高优先级，用于 Docker 内部网络等特殊场景）
-  if (process.env.FORCE_HTTPS === 'true') {
-    return true
-  }
-
-  // 1. 优先检查 X-Forwarded-Proto 头（由标准反向代理设置）
-  const proto = ctx.get('X-Forwarded-Proto')
-  if (proto) {
-    return proto === 'https'
-  }
-
-  // 2. 检查 Cloudflare 头
-  const cfVisitor = ctx.get('CF-Visitor')
-  if (cfVisitor) {
-    try {
-      const visitor = JSON.parse(cfVisitor)
-      return visitor.scheme === 'https'
-    } catch {
-      // 解析失败，继续其他检查
-    }
-  }
-
-  // 3. 检查 X-Forwarded-SSL（一些反向代理使用这个）
-  const forwardedSsl = ctx.get('X-Forwarded-SSL')
-  if (forwardedSsl) {
-    return forwardedSsl === 'on' || forwardedSsl === '1'
-  }
-
-  // 4. 检查 Front-End-Https（微软 IIS 使用）
-  const feHttps = ctx.get('Front-End-Https')
-  if (feHttps) {
-    return feHttps.toLowerCase() === 'on'
-  }
-
-  // 5. 回退到检查 NODE_ENV（仅用于直接连接）
-  return process.env.NODE_ENV === 'production'
-}
+// Cookie secure 配置
+// 在 Docker 内部网络场景下，前端通过 HTTP 访问后端，此时不能使用 secure cookie
+// 使用 COOKIE_SECURE 环境变量显式控制，默认为 false
+const COOKIE_SECURE = process.env.COOKIE_SECURE === 'true'
 
 export const authController = {
   register: async (ctx: Context) => {
@@ -61,7 +26,7 @@ export const authController = {
       // Set cookie
       ctx.cookies.set('blog_session', result.token, {
         httpOnly: true,
-        secure: isSecureRequest(ctx),
+        secure: COOKIE_SECURE,
         sameSite: 'lax',
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       })
@@ -100,7 +65,7 @@ export const authController = {
       // Set cookie
       ctx.cookies.set('blog_session', result.token, {
         httpOnly: true,
-        secure: isSecureRequest(ctx),
+        secure: COOKIE_SECURE,
         sameSite: 'lax',
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       })
@@ -131,7 +96,7 @@ export const authController = {
 
     ctx.cookies.set('blog_session', '', {
       httpOnly: true,
-      secure: isSecureRequest(ctx),
+      secure: COOKIE_SECURE,
       sameSite: 'lax',
       maxAge: 0,
     })
