@@ -14,10 +14,6 @@ export function BlogFooter() {
             <p className="text-xs text-muted-foreground">
               {"© "}{year}{" "}{t("hero.name")}{" · "}{t("footer.copyright")}
             </p>
-            <p className="text-xs text-muted-foreground/60">
-              {t("footer.powered")}{" "}
-              <span className="text-muted-foreground">Next.js</span>
-            </p>
           </div>
         </div>
       </div>

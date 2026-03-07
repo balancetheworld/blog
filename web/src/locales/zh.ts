@@ -67,4 +67,10 @@ export default {
     categories: '分类',
     recently: '动态',
   },
+
+  // Footer
+  footer: {
+    copyright: '保留所有权利',
+    powered: 'Powered by',
+  },
 } as const

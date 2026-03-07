@@ -67,4 +67,10 @@ export default {
     categories: 'Categories',
     recently: 'Thoughts',
   },
+
+  // Footer
+  footer: {
+    copyright: 'All rights reserved',
+    powered: 'Powered by',
+  },
 } as const
