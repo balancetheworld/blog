@@ -131,8 +131,8 @@ export const PostModel = {
     const db = getDatabase()
     const now = new Date().toISOString()
     const info = db.prepare(
-      'INSERT INTO posts (slug, category, cover_image, view_count, created_at, updated_at) VALUES (?, ?, ?, 0, ?, ?)'
-    ).run(post.slug, post.category, post.cover_image, now, now)
+      'INSERT INTO posts (slug, category, cover_image, view_count, is_pinned, created_at, updated_at) VALUES (?, ?, ?, 0, ?, ?, ?)'
+    ).run(post.slug, post.category, post.cover_image, post.is_pinned ?? 0, now, now)
     return info.lastInsertRowid as number
   },
 
@@ -153,6 +153,10 @@ export const PostModel = {
     if (post.cover_image !== undefined) {
       fields.push('cover_image = ?')
       values.push(post.cover_image)
+    }
+    if (post.is_pinned !== undefined) {
+      fields.push('is_pinned = ?')
+      values.push(post.is_pinned)
     }
 
     fields.push('updated_at = ?')

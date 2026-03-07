@@ -56,15 +56,47 @@ function ArticleEditor({
     }
   }, [category, categories])
 
+  // Auto-generate slug from title if slug is empty (only for new posts, not edits)
+  useEffect(() => {
+    if (!isEdit && type === "post" && !slug) {
+      // Use Chinese title if available, otherwise fallback to English title
+      const sourceTitle = titleZh.trim() || titleEn.trim()
+      if (sourceTitle) {
+        // Generate URL-friendly slug
+        const generatedSlug = sourceTitle
+          .toLowerCase()
+          // Remove special chars except spaces, hyphens, alphanumeric
+          .replace(/[^\u4e00-\u9fa5a-z0-9\s-]/gi, '')
+          // Replace spaces with hyphens
+          .replace(/\s+/g, '-')
+          // Remove consecutive hyphens
+          .replace(/-+/g, '-')
+          // Remove leading/trailing hyphens
+          .replace(/^-+|-+$/g, '')
+        // Add timestamp for uniqueness if Chinese title (to avoid URL encoding issues)
+        const finalSlug = /[\u4e00-\u9fa5]/.test(generatedSlug)
+          ? `post-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`
+          : generatedSlug
+        setSlug(finalSlug)
+      }
+    }
+  }, [titleZh, titleEn, slug, isEdit, type])
+
   const currentContent = langTab === "en" ? contentEn : contentZh
   const currentTitle = langTab === "en" ? titleEn : titleZh
   const currentSummary = langTab === "en" ? summaryEn : summaryZh
 
   const handleSave = async () => {
+    // Validate: posts must have a slug
+    if (type === "post" && !slug.trim()) {
+      alert("Please enter a slug for the post")
+      return
+    }
+
     setSaving(true)
     const payload = {
       type,
-      slug,
+      slug: slug.trim(),
       category,
       cover_image: coverImage || null,
       tags: articleTags,
@@ -126,7 +158,15 @@ function ArticleEditor({
           <div className="mb-4 grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-1">
               <label className="text-xs font-medium text-muted-foreground">Slug</label>
-              <input value={slug} onChange={(e) => setSlug(e.target.value)} className="rounded-lg border border-border bg-background/50 px-3 py-2 text-sm outline-none focus:border-primary" placeholder="my-post-slug" />
+              <input
+                value={slug}
+                onChange={(e) => setSlug(e.target.value)}
+                className="rounded-lg border border-border bg-background/50 px-3 py-2 text-sm outline-none focus:border-primary"
+                placeholder={isEdit ? "my-post-slug" : "Auto-generated from title"}
+              />
+              {!isEdit && (
+                <p className="text-[10px] text-muted-foreground">Auto-generated from title (editable)</p>
+              )}
             </div>
             <div className="flex flex-col gap-1">
   <label className="text-xs font-medium text-muted-foreground">Category</label>
