@@ -71,6 +71,5 @@ export default {
   // Footer
   footer: {
     copyright: '保留所有权利',
-    powered: 'Powered by',
   },
 } as const

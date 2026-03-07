@@ -71,6 +71,5 @@ export default {
   // Footer
   footer: {
     copyright: 'All rights reserved',
-    powered: 'Powered by',
   },
 } as const

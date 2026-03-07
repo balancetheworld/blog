@@ -1,5 +1,5 @@
 import type { Context, Next } from 'koa'
-import { getDatabase } from '../database/connection'
+import { UserModel } from '../models/user.model'
 
 const SESSION_COOKIE = 'blog_session'
 
@@ -12,28 +12,31 @@ interface SessionState {
 }
 
 function verifySessionFromToken(token: string): SessionState {
-  const db = getDatabase()
+  // Clean expired sessions (统一使用 UserModel 的方法)
+  UserModel.cleanExpiredSessions()
 
-  // Clean expired sessions
-  db.prepare('DELETE FROM sessions WHERE expires_at < ?').run(new Date().toISOString())
+  const session = UserModel.findSessionByToken(token)
+  if (!session) {
+    return { authenticated: false }
+  }
 
-  const row = db.prepare(
-    `SELECT s.user_id, u.username, u.display_name, u.role
-     FROM sessions s
-     JOIN admin_users u ON s.user_id = u.id
-     WHERE s.token = ? AND s.expires_at > ?`
-  ).get(token, new Date().toISOString()) as { user_id: number; username: string; display_name: string; role: string } | undefined
+  // Check if session is expired
+  if (new Date(session.expires_at) < new Date()) {
+    UserModel.deleteSession(token)
+    return { authenticated: false }
+  }
 
-  if (!row) {
+  const user = UserModel.findById(session.user_id)
+  if (!user) {
     return { authenticated: false }
   }
 
   return {
     authenticated: true,
-    userId: row.user_id,
-    username: row.username,
-    displayName: row.display_name,
-    role: row.role,
+    userId: user.id,
+    username: user.username,
+    displayName: user.display_name,
+    role: user.role,
   }
 }
 

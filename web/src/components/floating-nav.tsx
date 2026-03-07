@@ -203,31 +203,22 @@ export function FloatingNav() {
               {/* 登录/用户信息区域 */}
               <div className="mt-2 border-t border-border pt-2">
                 {isAuthenticated ? (
-                  // 已登录：显示用户信息 + 登出按钮
-                  <div className="flex flex-col gap-0.5">
-                    <div className="flex items-center gap-2 px-3 py-2 text-xs text-muted-foreground">
-                      {/* 用户头像（取昵称首字母） */}
-                      <div className="flex h-5 w-5 items-center justify-center rounded-full bg-primary/10 text-[10px] font-bold text-primary">
-                        {user?.displayName?.charAt(0)?.toUpperCase() || "U"}
-                      </div>
-                      <span>{user?.displayName}</span> {/* 用户名 */}
-                    </div>
-                    <button
-                      onClick={handleLogout}
-                      className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 text-left"
-                    >
-                      <LogOut className="h-4 w-4 shrink-0" />
-                      {t("admin.logout")} {/* 登出 */}
-                    </button>
-                  </div>
+                  // 已登录：只显示登出按钮
+                  <button
+                    onClick={handleLogout}
+                    className="flex w-full items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    {t("admin.logout")}
+                  </button>
                 ) : (
                   // 未登录：显示登录按钮
                   <Link
                     href="/login"
-                    className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                    className="flex items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50"
                   >
-                    <LogIn className="h-4 w-4 shrink-0" />
-                    {t("admin.signIn")} {/* 登录 */}
+                    <LogIn className="h-4 w-4" />
+                    {t("admin.signIn")}
                   </Link>
                 )}
               </div>
@@ -275,21 +266,26 @@ export function FloatingNav() {
       {/* 3. 桌面端导航：左上角胶囊式导航（仅 md 及以上屏幕显示） */}
       <nav
         className="fixed left-6 top-6 z-50 hidden md:block"
-        onMouseEnter={() => setIsHovering(true)} // 鼠标进入 → 标记悬浮状态
-        onMouseLeave={() => setIsHovering(false)} // 鼠标离开 → 取消悬浮状态
+        onMouseEnter={() => setIsHovering(true)}
+        onMouseLeave={() => {
+          // 用户菜单打开时，不收起导航栏
+          if (!showUserMenu) {
+            setIsHovering(false)
+          }
+        }}
       >
         <div className="glass-nav flex items-center rounded-full px-3 py-2 transition-all duration-300">
           {/* 站点标识/头像 */}
           <Link href="/" className="flex shrink-0 items-center gap-2">
             <div className="relative flex h-7 w-7 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
-             <img src="/avatar.png" alt="Avatar" className="h-full w-full rounded-full object-cover" /> {/* 站点头像 */}
+             <img src="/avatar.png" alt="Avatar" className="h-full w-full rounded-full object-cover" />
             </div>
             <span className="text-sm font-semibold text-foreground whitespace-nowrap">
-              {t("site.title")} {/* 站点标题 */}
+              {t("site.title")}
             </span>
           </Link>
 
-          <div className="mx-2 h-4 w-px bg-border shrink-0" /> {/* 分隔线 */}
+          <div className="mx-2 h-4 w-px bg-border shrink-0" />
 
           {/* 展开提示箭头：展开时隐藏，收起时显示 */}
           <div className={`overflow-hidden transition-all duration-300 ${isExpanded ? "w-0 opacity-0" : "w-5 opacity-100"}`}>
@@ -318,8 +314,8 @@ export function FloatingNav() {
             })}
 
             <div className="mx-1 h-4 w-px bg-border shrink-0" />
-            <ThemeToggle /> {/* 主题切换 */}
-            <LanguageSwitcher /> {/* 语言切换 */}
+            <ThemeToggle />
+            <LanguageSwitcher />
 
             {/* 管理员专属导航项 */}
             {isAdmin && (
@@ -349,60 +345,43 @@ export function FloatingNav() {
                 </Link>
               </>
             )}
-
-            <div className="mx-1 h-4 w-px bg-border shrink-0" />
-
-            {/* 用户/登录区域 */}
-            {isAuthenticated ? (
-              // 已登录：显示用户头像 + 下拉菜单
-              <div className="relative" ref={userMenuRef}>
-                <button
-                  onClick={() => setShowUserMenu(!showUserMenu)} // 切换下拉菜单状态
-                  className="flex shrink-0 items-center gap-1.5 rounded-full px-2 py-1.5 text-xs transition-colors text-muted-foreground hover:text-foreground hover:bg-muted/50"
-                >
-                  {/* 用户头像（首字母） */}
-                  <div className="flex h-5 w-5 items-center justify-center rounded-full bg-primary/15 text-[10px] font-bold text-primary">
-                    {user?.displayName?.charAt(0)?.toUpperCase() || "U"}
-                  </div>
-                  <span className="max-w-[60px] truncate whitespace-nowrap">{user?.displayName}</span>
-                </button>
-                {/* 用户下拉菜单 */}
-                {showUserMenu && (
-                  <div className="absolute right-0 top-full mt-2 w-44 animate-fade-in glass-nav rounded-xl px-2 py-2">
-                    <div className="px-2 py-1.5 text-xs text-muted-foreground truncate">
-                      @{user?.username} {/* 用户名 */}
-                    </div>
-                    {isAdmin && (
-                      <Link
-                        href="/admin"
-                        onClick={() => setShowUserMenu(false)} // 点击后关闭菜单
-                        className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-xs text-muted-foreground hover:text-foreground hover:bg-muted/50"
-                      >
-                        <Settings className="h-3.5 w-3.5" />
-                        {t("admin.dashboard")} {/* 管理员面板 */}
-                      </Link>
-                    )}
-                    <button
-                      onClick={handleLogout}
-                      className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-xs text-muted-foreground hover:text-foreground hover:bg-muted/50 text-left"
-                    >
-                      <LogOut className="h-3.5 w-3.5" />
-                      {t("admin.logout")}
-                    </button>
-                  </div>
-                )}
-              </div>
-            ) : (
-              // 未登录：显示登录按钮
-              <Link
-                href="/login"
-                className="flex shrink-0 items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-1.5 text-xs font-medium text-primary transition-colors hover:bg-primary/20 whitespace-nowrap"
-              >
-                <LogIn className="h-3.5 w-3.5" />
-                {t("admin.signIn")}
-              </Link>
-            )}
           </div>
+
+          <div className="mx-1 h-4 w-px bg-border shrink-0" />
+
+          {/* 用户/登录区域：不受展开状态控制，始终显示 */}
+          {isAuthenticated ? (
+            <div className="relative" ref={userMenuRef}>
+              <button
+                onClick={() => setShowUserMenu(!showUserMenu)}
+                className="flex shrink-0 items-center gap-1.5 rounded-full px-2 py-1.5 text-xs transition-colors text-muted-foreground hover:text-foreground hover:bg-muted/50"
+              >
+                <div className="flex h-5 w-5 items-center justify-center rounded-full bg-primary/15 text-[10px] font-bold text-primary">
+                  {user?.displayName?.charAt(0)?.toUpperCase() || "U"}
+                </div>
+                <span className="max-w-[60px] truncate whitespace-nowrap">{user?.displayName}</span>
+              </button>
+              {showUserMenu && (
+                <div className="absolute left-3/5 -translate-x-1/2 top-full mt-3 w-20 animate-fade-in glass-nav rounded-lg px-1 py-1">
+                  <button
+                    onClick={handleLogout}
+                    className="flex w-full items-center justify-center gap-1.5 rounded-md px-1.5 py-1.5 text-xs text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                  >
+                    <LogOut className="h-3 w-3" />
+                    {t("admin.logout")}
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <Link
+              href="/login"
+              className="flex shrink-0 items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-1.5 text-xs font-medium text-primary transition-colors hover:bg-primary/20 whitespace-nowrap"
+            >
+              <LogIn className="h-3.5 w-3.5" />
+              {t("admin.signIn")}
+            </Link>
+          )}
         </div>
       </nav>
 

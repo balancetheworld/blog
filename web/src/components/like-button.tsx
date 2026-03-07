@@ -26,13 +26,12 @@ export function LikeButton({ articleType, articleId }: LikeButtonProps) {
     const fetchLikeStatus = async () => {
       try {
         const response = await api.get<any>(`/api/likes?type=${articleType}&articleId=${articleId}`)
-        console.log('Like button - Initial data:', response)
         if (response?.data) {
           setLiked(response.data.liked || false)
           setCount(response.data.count || 0)
         }
       } catch (error) {
-        console.error('Failed to fetch like status:', error)
+        // Silent fail for like status
       } finally {
         setLoading(false)
       }
@@ -55,7 +54,6 @@ export function LikeButton({ articleType, articleId }: LikeButtonProps) {
 
     try {
       const result = await api.post<any>('/api/likes', { article_type: articleType, article_id: articleId })
-      console.log('Like button - Server response:', result)
 
       // 使用服务器返回的最终状态
       if (result?.data) {
@@ -63,7 +61,6 @@ export function LikeButton({ articleType, articleId }: LikeButtonProps) {
         setCount(result.data.count || 0)
       }
     } catch (error) {
-      console.error('Like button - Error:', error)
       // 回滚乐观更新
       setLiked(liked)
       setCount(count)

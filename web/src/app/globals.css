@@ -635,3 +635,4 @@ html:not(.dark) button[class*="bg-muted/60"]:hover {
 .prose-blog a {
   @apply text-primary underline underline-offset-4 decoration-primary/40 hover:decoration-primary transition-colors;
 }
+
