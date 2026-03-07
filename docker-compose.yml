@@ -33,6 +33,8 @@ services:
       - CORS_ORIGIN=https://blog.smob.cc
       - DATABASE_PATH=/app/database/blog.db
       - FORCE_HTTPS=true
+      - COOKIE_DOMAIN=blog.smob.cc
+      - SESSION_SECRET=your-secret-key-change-in-production
     volumes:
       # 持久化数据库
       - blog-data:/app/database
