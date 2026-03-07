@@ -3,6 +3,11 @@ import { AuthService } from '../services/auth.service'
 
 // 检查请求是否来自 HTTPS（考虑反向代理）
 function isSecureRequest(ctx: Context): boolean {
+  // 0. 环境变量显式设置（最高优先级，用于 Docker 内部网络等特殊场景）
+  if (process.env.FORCE_HTTPS === 'true') {
+    return true
+  }
+
   // 1. 优先检查 X-Forwarded-Proto 头（由标准反向代理设置）
   const proto = ctx.get('X-Forwarded-Proto')
   if (proto) {
@@ -32,12 +37,7 @@ function isSecureRequest(ctx: Context): boolean {
     return feHttps.toLowerCase() === 'on'
   }
 
-  // 5. 环境变量显式设置（最高优先级覆盖）
-  if (process.env.FORCE_HTTPS === 'true') {
-    return true
-  }
-
-  // 6. 回退到检查 NODE_ENV（仅用于直接连接）
+  // 5. 回退到检查 NODE_ENV（仅用于直接连接）
   return process.env.NODE_ENV === 'production'
 }
 
