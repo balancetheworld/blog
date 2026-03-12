@@ -22,14 +22,8 @@ RUN apk add --no-cache python3 make g++ sqlite
 # Copy package files (independent project, no workspace)
 COPY package.json ./
 
-# Install dependencies
-RUN pnpm install --frozen-lockfile 2>/dev/null || pnpm install
-
-# Compile native modules (pnpm 10 ignores build scripts)
-RUN cd node_modules/.pnpm/better-sqlite3@*/node_modules/better-sqlite3 && \
-    npx node-gyp rebuild && \
-    mkdir -p build/Release && \
-    cp build/Release/better_sqlite3.node .
+# Install dependencies (enable build scripts for native modules)
+RUN pnpm install --frozen-lockfile --ignore-scripts=false 2>/dev/null || pnpm install --ignore-scripts=false
 
 # -----------------
 # Builder Stage
