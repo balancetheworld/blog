@@ -19,8 +19,8 @@ RUN corepack enable && corepack prepare pnpm@10 --activate
 # Copy package files (independent project, no workspace)
 COPY package.json ./
 
-# Install dependencies (with fallback if no lockfile)
-RUN pnpm install --frozen-lockfile 2>/dev/null || pnpm install
+# Install dependencies (enable build scripts for native modules)
+RUN pnpm install --frozen-lockfile --ignore-scripts=false 2>/dev/null || pnpm install --ignore-scripts=false
 
 # Copy source code
 COPY . .
