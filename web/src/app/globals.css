@@ -75,6 +75,17 @@
   --sidebar-accent-foreground: var(--stone-900);
   --sidebar-border: var(--stone-200);
   --sidebar-ring: var(--teal-400);
+
+  /* 代码样式变量 - 浅色模式 */
+  --code-inline-bg: rgba(15, 22, 36, 0.05);
+  --code-inline-text: rgba(35, 37, 42, 0.87);
+  --code-inline-border: rgba(37, 39, 45, 0.1);
+
+  /* macOS 代码块 */
+  --code-block-wrapper-bg: #f5f5f7;
+  --code-block-wrapper-border: rgba(229, 231, 235, 1);
+  --code-block-toolbar-bg: #e5e7eb;
+  --code-block-content-bg: #f5f5f7;
 }
 
 .dark {
@@ -144,6 +155,17 @@
   --sidebar-accent-foreground: var(--stone-900);
   --sidebar-border: var(--stone-200);
   --sidebar-ring: var(--teal-500);
+
+  /* 代码样式变量 - 暗色模式 */
+  --code-inline-bg: rgba(231, 231, 243, 0.07);
+  --code-inline-text: rgba(251, 251, 254, 0.75);
+  --code-inline-border: rgba(238, 238, 246, 0.11);
+
+  /* macOS 代码块 */
+  --code-block-wrapper-bg: #23272f;
+  --code-block-wrapper-border: rgba(55, 65, 81, 1);
+  --code-block-toolbar-bg: #23272f;
+  --code-block-content-bg: #1a1d23;
 }
 
 @theme inline {
@@ -621,7 +643,18 @@ html:not(.dark) button[class*="bg-muted/60"]:hover {
   @apply italic;
 }
 .prose-blog code {
-  @apply rounded bg-muted px-1.5 py-0.5 font-mono text-sm;
+  @apply rounded px-[0.2em] py-[0.1em] font-mono text-sm font-semibold;
+  background-color: var(--code-inline-bg);
+  color: var(--code-inline-text);
+  border: 1px solid var(--code-inline-border);
+  font-size: 0.875em;
+  line-height: 1.4;
+}
+/* 暗色模式下的行内代码 */
+.dark .prose-blog code {
+  background-color: var(--code-inline-bg);
+  color: var(--code-inline-text);
+  border-color: var(--code-inline-border);
 }
 .prose-blog ul {
   @apply mb-4 ml-6 list-disc;
@@ -634,5 +667,582 @@ html:not(.dark) button[class*="bg-muted/60"]:hover {
 }
 .prose-blog a {
   @apply text-primary underline underline-offset-4 decoration-primary/40 hover:decoration-primary transition-colors;
+}
+
+/* Code blocks with syntax highlighting */
+.prose-blog pre {
+  @apply rounded-lg bg-muted/50 p-4 my-4 overflow-x-auto;
+}
+.prose-blog pre code {
+  @apply bg-transparent p-0 text-sm;
+}
+
+/* ============================================================================
+   🪟 macOS 窗口风格代码块样式
+   ============================================================================ */
+
+/* macOS 代码块包装器 */
+.mac-code-block-wrapper {
+  background-color: var(--code-block-wrapper-bg);
+  border: 1px solid var(--code-block-wrapper-border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 1rem 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.dark .mac-code-block-wrapper {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* macOS 代码块工具栏 */
+.mac-code-block-toolbar {
+  height: 2rem;
+  padding: 0 0.75rem;
+  background-color: var(--code-block-toolbar-bg);
+  border-bottom: 1px solid var(--code-block-wrapper-border);
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+/* 红黄绿圆点容器 */
+.mac-code-block-dots {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* 红黄绿圆点 */
+.mac-code-block-dot {
+  width: 0.875rem;
+  height: 0.875rem;
+  border-radius: 9999px;
+}
+
+.mac-code-block-dot.red {
+  background-color: #f87171;
+}
+
+.mac-code-block-dot.yellow {
+  background-color: #fbbf24;
+}
+
+.mac-code-block-dot.green {
+  background-color: #34d399;
+}
+
+/* 语言标签 */
+.mac-code-block-language {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.75rem;
+  color: hsl(var(--muted-foreground));
+  font-family: "JetBrains Mono", monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* 复制按钮 */
+.mac-code-block-copy-button {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  color: hsl(var(--muted-foreground));
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-left: auto;
+}
+
+.mac-code-block-copy-button:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.dark .mac-code-block-copy-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.mac-code-block-copy-button svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* 已复制状态 */
+.mac-code-block-copy-button.copied {
+  color: #22c55e;
+}
+
+.mac-code-block-copy-button.copied svg {
+  color: #22c55e;
+}
+
+.mac-code-block-copy-button.copied .copied-text {
+  color: #22c55e;
+}
+
+/* macOS 风格的 pre 元素 */
+.mac-code-block-wrapper pre {
+  margin: 0 !important;
+  border-radius: 0 !important;
+  border: none !important;
+  background-color: var(--code-block-content-bg) !important;
+  padding: 1rem !important;
+}
+
+/* 代码块中的 code 元素 */
+.mac-code-block-wrapper pre code {
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: inherit;
+  font-family: "JetBrains Mono", monospace;
+}
+
+/* 确保语法高亮的行不会产生框框 */
+.mac-code-block-wrapper .hljs {
+  background: transparent !important;
+}
+.mac-code-block-wrapper .hljs-line {
+  background: transparent !important;
+}
+.mac-code-block-wrapper .hljs-ln {
+  background: transparent !important;
+}
+.mac-code-block-wrapper .hljs-ln-code {
+  background: transparent !important;
+  padding: 0 !important;
+}
+.mac-code-block-wrapper .hljs-ln-line {
+  background: transparent !important;
+  padding: 0 !important;
+}
+
+/* 编辑器中的代码块也使用 macOS 样式 */
+.ProseMirror pre {
+  position: relative;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: var(--code-block-wrapper-bg);
+  border: 1px solid var(--code-block-wrapper-border);
+  padding: 0;
+}
+
+/* 编辑器代码块工具栏伪元素 */
+.ProseMirror pre::before {
+  content: '';
+  display: block;
+  height: 2rem;
+  background-color: var(--code-block-toolbar-bg);
+  border-bottom: 1px solid var(--code-block-wrapper-border);
+  position: relative;
+}
+
+/* 红黄绿圆点 */
+.ProseMirror pre::after {
+  content: '';
+  position: absolute;
+  top: 0.5rem;
+  left: 0.75rem;
+  width: 0.875rem;
+  height: 0.875rem;
+  border-radius: 9999px;
+  background: radial-gradient(circle at 30% 30%, #f87171, #ef4444);
+  box-shadow:
+    1.25rem 0 0 #fbbf24,
+    2.5rem 0 0 #34d399;
+  z-index: 1;
+}
+
+/* 暗色模式下的圆点颜色微调 */
+.dark .ProseMirror pre::after {
+  background: radial-gradient(circle at 30% 30%, #ff6b6b, #ee5a5a);
+  box-shadow:
+    1.25rem 0 0 #ffd93d,
+    2.5rem 0 0 #6bcb77;
+}
+
+/* 编辑器代码块内容区域 */
+.ProseMirror pre > code {
+  display: block;
+  padding: 1rem;
+  background-color: var(--code-block-content-bg) !important;
+  border: none !important;
+  margin: 0 !important;
+  overflow-x: auto;
+}
+
+/* 确保编辑器中的代码没有额外背景 */
+.ProseMirror pre > code::before {
+  display: none;
+}
+
+/* Task lists - 显示页面 */
+.prose-blog ul[data-type="taskList"] {
+  @apply list-none ml-0;
+}
+.prose-blog ul[data-type="taskList"] li {
+  @apply flex items-center gap-2 my-1;
+  min-height: 1.5rem;
+}
+.prose-blog ul[data-type="taskList"] li input[type="checkbox"] {
+  @apply h-4 w-4 rounded border-border text-primary focus:ring-primary focus:ring-offset-0 flex-shrink-0 cursor-pointer;
+  margin-top: -0.0625rem; /* 往上微调 */
+}
+.prose-blog ul[data-type="taskList"] li p,
+.prose-blog ul[data-type="taskList"] li span {
+  line-height: 1.5rem;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+/* 任务列表完成状态显示删除线 - 使用 JS 添加的类名 */
+.prose-blog ul[data-type="taskList"] li.task-completed,
+.prose-blog ul[data-type="taskList"] li.task-completed p,
+.prose-blog ul[data-type="taskList"] li.task-completed div,
+.prose-blog ul[data-type="taskList"] li.task-completed span {
+  text-decoration: line-through !important;
+  color: hsl(var(--muted-foreground)) !important;
+}
+
+/* Horizontal rule */
+.prose-blog hr {
+  @apply border-border my-6;
+}
+
+/* Blockquote */
+.prose-blog blockquote {
+  @apply border-l-4 border-primary pl-4 italic text-muted-foreground my-4;
+}
+
+/* Images */
+.prose-blog img {
+  @apply rounded-lg max-w-full h-auto my-4;
+}
+
+/* Highlight.js syntax highlighting - light theme */
+/* 在 macOS 包装器内的代码块不需要背景色，背景由包装器提供 */
+.mac-code-block-wrapper .hljs {
+  background: transparent !important;
+}
+.mac-code-block-wrapper pre code {
+  background: transparent !important;
+}
+.hljs-comment,
+.hljs-quote {
+  color: hsl(var(--muted-foreground));
+  font-style: italic;
+}
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-subst {
+  color: #d73a49;
+}
+.hljs-number,
+.hljs-literal,
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag .hljs-attr {
+  color: #005cc5;
+}
+.hljs-string,
+.hljs-doctag {
+  color: #032f62;
+}
+.hljs-title,
+.hljs-section,
+.hljs-selector-id {
+  color: #6f42c1;
+  font-weight: bold;
+}
+.hljs-type,
+.hljs-class .hljs-title {
+  color: #6f42c1;
+}
+.hljs-tag,
+.hljs-name,
+.hljs-attribute {
+  color: #22863a;
+  font-weight: normal;
+}
+.hljs-regexp,
+.hljs-link {
+  color: #005cc5;
+}
+.hljs-symbol,
+.hljs-bullet {
+  color: #005cc5;
+}
+.hljs-built_in,
+.hljs-builtin-name {
+  color: #005cc5;
+}
+.hljs-meta {
+  color: #005cc5;
+}
+.hljs-deletion {
+  background: #ffeef0;
+}
+.hljs-addition {
+  background: #e6ffec;
+}
+.hljs-emphasis {
+  font-style: italic;
+}
+.hljs-strong {
+  font-weight: bold;
+}
+
+/* Highlight.js syntax highlighting - dark theme */
+.dark .mac-code-block-wrapper .hljs {
+  background: transparent !important;
+}
+.dark .hljs-comment,
+.dark .hljs-quote {
+  color: #8b949e;
+}
+.dark .hljs-keyword,
+.dark .hljs-selector-tag,
+.dark .hljs-subst {
+  color: #ff7b72;
+}
+.dark .hljs-number,
+.dark .hljs-literal {
+  color: #79c0ff;
+}
+.dark .hljs-string,
+.dark .hljs-doctag {
+  color: #a5d6ff;
+}
+.dark .hljs-title,
+.dark .hljs-section,
+.dark .hljs-selector-id {
+  color: #d2a8ff;
+  font-weight: bold;
+}
+.dark .hljs-type,
+.dark .hljs-class .hljs-title {
+  color: #d2a8ff;
+}
+.dark .hljs-tag,
+.dark .hljs-name,
+.dark .hljs-attribute {
+  color: #7ee787;
+}
+.dark .hljs-regexp,
+.dark .hljs-link {
+  color: #a5d6ff;
+}
+.dark .hljs-symbol,
+.dark .hljs-bullet {
+  color: #ffa657;
+}
+.dark .hljs-built_in,
+.dark .hljs-builtin-name {
+  color: #ffa657;
+}
+.dark .hljs-meta {
+  color: #79c0ff;
+}
+.dark .hljs-deletion {
+  background: rgba(248, 81, 73, 0.15);
+}
+.dark .hljs-addition {
+  background: rgba(46, 160, 67, 0.15);
+}
+
+/* TipTap Editor Styles */
+.ProseMirror {
+  outline: none;
+  min-height: 300px;
+  padding: 1rem;
+}
+.ProseMirror p.is-editor-empty:first-child::before {
+  color: hsl(var(--muted-foreground));
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+.ProseMirror h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  color: hsl(var(--foreground));
+}
+.ProseMirror h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+  color: hsl(var(--foreground));
+}
+.ProseMirror h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  color: hsl(var(--foreground));
+}
+.ProseMirror h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-top: 0.75rem;
+  margin-bottom: 0.25rem;
+  color: hsl(var(--foreground));
+}
+.ProseMirror p {
+  margin-bottom: 0.75rem;
+  font-size: 1rem;
+  line-height: 1.625;
+  color: hsl(var(--foreground) / 0.95);
+}
+/* .ProseMirror pre 样式已在 macOS 窗口样式部分定义 */
+.ProseMirror code {
+  border-radius: 6px;
+  background-color: var(--code-inline-bg);
+  color: var(--code-inline-text);
+  border: 1px solid var(--code-inline-border);
+  padding: 0.1em 0.2em;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.875em;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.ProseMirror pre code {
+  background-color: transparent;
+  border: none;
+  padding: 0;
+  font-size: 0.875rem;
+  font-weight: 400;
+}
+/* 暗色模式下的行内代码 */
+.dark .ProseMirror code {
+  background-color: var(--code-inline-bg);
+  color: var(--code-inline-text);
+  border-color: var(--code-inline-border);
+}
+.ProseMirror a {
+  color: hsl(var(--primary));
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.ProseMirror a:hover {
+  text-decoration-color: hsl(var(--primary) / 0.8);
+}
+.ProseMirror ul,
+.ProseMirror ol {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  margin-left: 1.25rem;
+}
+.ProseMirror ul {
+  list-style-type: disc;
+}
+.ProseMirror ol {
+  list-style-type: decimal;
+}
+.ProseMirror li {
+  margin-top: 0.125rem;
+  margin-bottom: 0.125rem;
+}
+.ProseMirror li p {
+  margin-bottom: 0;
+}
+.ProseMirror ul[data-type="taskList"] {
+  list-style-type: none;
+  margin-left: 0;
+}
+.ProseMirror ul[data-type="taskList"] li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+.ProseMirror ul[data-type="taskList"] li > label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+.ProseMirror ul[data-type="taskList"] li > label input[type="checkbox"] {
+  height: 1rem;
+  width: 1rem;
+  border-radius: 0.25rem;
+  border-color: hsl(var(--border));
+  color: hsl(var(--primary));
+  cursor: pointer;
+  margin-top: -0.1875rem; /* 往上微调更多一点 */
+}
+/* 任务列表完成状态显示删除线 */
+.ProseMirror ul[data-type="taskList"] li[data-checked="true"] > div {
+  text-decoration: line-through;
+  color: hsl(var(--muted-foreground));
+}
+.ProseMirror ul[data-type="taskList"] li[data-checked="true"] > div {
+  text-decoration: line-through;
+  color: hsl(var(--muted-foreground));
+}
+.ProseMirror blockquote {
+  border-left: 4px solid hsl(var(--primary));
+  padding-left: 1rem;
+  font-style: italic;
+  color: hsl(var(--muted-foreground));
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+.ProseMirror hr {
+  border-color: hsl(var(--border));
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.ProseMirror img {
+  border-radius: 0.5rem;
+  max-width: 100%;
+  height: auto;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+.ProseMirror .ProseMirror-selectednode {
+  outline: 2px solid hsl(var(--primary));
+}
+.ProseMirror ::selection {
+  background-color: hsl(var(--primary) / 0.2);
+}
+.dark .ProseMirror ::selection {
+  background-color: hsl(var(--primary) / 0.3);
+}
+/* .ProseMirror pre::before 样式已在 macOS 窗口样式部分定义 */
+.ProseMirror strong {
+  font-weight: 600;
+  color: hsl(var(--foreground));
+}
+.ProseMirror em {
+  font-style: italic;
+}
+.ProseMirror s {
+  text-decoration: line-through;
+  color: hsl(var(--muted-foreground));
+}
+.ProseMirror mark {
+  background-color: rgb(254 240 138 / 0.5);
+  color: hsl(var(--foreground));
+  padding: 0 0.25rem;
+  border-radius: 0.25rem;
+}
+.dark .ProseMirror mark {
+  background-color: rgb(168 85 247 / 0.3);
 }
 

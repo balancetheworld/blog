@@ -4,26 +4,12 @@ import { useParams } from "next/navigation"
 import Link from "next/link"
 import useSWR from "swr"
 import { useI18n } from "@/lib/i18n-context"
-import { MarkdownRenderer } from "@/components/markdown-renderer"
+import { HtmlRenderer } from "@/components/html-renderer"
 import { LikeButton } from "@/components/like-button"
 import { CommentSection } from "@/components/comment-section"
 import { ArrowLeft, Eye, Heart } from "lucide-react"
 import { fetcher } from "@/lib/fetcher"
-
-interface Translation {
-  lang: string
-  title: string
-  content: string
-}
-
-interface NoteData {
-  id: number
-  nid: number
-  view_count: number
-  like_count: number
-  created_at: string
-  translations: Translation[]
-}
+import type { NoteData } from "@/types/components"
 
 export default function NoteDetailPage() {
   const params = useParams()
@@ -118,7 +104,7 @@ export default function NoteDetailPage() {
           </header>
 
           <div className="mt-8 border-t border-border pt-8">
-            <MarkdownRenderer content={translation.content} />
+            <HtmlRenderer content={translation.content} />
           </div>
 
           {/* Like button */}

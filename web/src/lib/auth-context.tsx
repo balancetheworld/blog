@@ -3,24 +3,7 @@
 import { createContext, useContext, useCallback, type ReactNode } from 'react'
 import useSWR from 'swr'
 import { authService } from '../services'
-
-interface User {
-  id: number
-  username: string
-  displayName: string
-  role: string
-}
-
-interface AuthContextType {
-  user: User | null
-  isLoading: boolean
-  isAuthenticated: boolean
-  isAdmin: boolean
-  login: (username: string, password: string) => Promise<{ success: boolean; error?: string }>
-  register: (username: string, password: string, displayName: string) => Promise<{ success: boolean; error?: string }>
-  logout: () => Promise<void>
-  refresh: () => void
-}
+import type { AuthContextType, AuthUser } from '@/types/contexts'
 
 const AuthContext = createContext<AuthContextType | null>(null)
 
@@ -40,7 +23,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     shouldRetryOnError: false,
   })
 
-  const user: User | null = data?.data ?? null
+  const user: AuthUser | null = data?.data ?? null
 
   const login = useCallback(async (username: string, password: string) => {
     try {

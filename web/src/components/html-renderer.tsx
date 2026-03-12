@@ -1,23 +1,21 @@
-"use client"
+'use client'
 
-import React, { useEffect, useRef } from "react"
-import type { MarkdownRendererProps } from "@/types/components"
+import { useEffect, useRef } from 'react'
+import { cn } from '@/lib/utils'
+import type { HtmlRendererProps } from "@/types/components"
 
 // 动态导入 highlight.js，避免 SSR 问题
 const highlightJs = typeof window !== 'undefined' ? require('highlight.js') : null
 
-export function MarkdownRenderer({ content }: MarkdownRendererProps) {
+export function HtmlRenderer({ content, className }: HtmlRendererProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const processedRef = useRef<WeakSet<HTMLPreElement>>(new WeakSet())
-
-  // Simple markdown to HTML conversion
-  const html = markdownToHtml(content)
 
   useEffect(() => {
     const container = containerRef.current
     if (!container || !highlightJs) return
 
-    // 处理所有代码块，添加 macOS 窗口样式
+    // 处理所有代码块
     const processCodeBlocks = () => {
       const codeBlocks = container.querySelectorAll('pre:not([data-enhanced="true"])')
 
@@ -132,12 +130,44 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
       })
     }
 
+    // 处理任务列表删除线 - 重写整个逻辑
+    const processTaskLists = () => {
+      const taskItems = container.querySelectorAll('ul[data-type="taskList"] li')
+      taskItems.forEach((li) => {
+        const checkbox = li.querySelector('input[type="checkbox"]') as HTMLInputElement
+        if (!checkbox) return
+
+        // 先清除之前可能添加的 task-completed 类
+        li.classList.remove('task-completed')
+
+        // 正确检测 checkbox 状态
+        // 1. 优先使用 JavaScript 的 checked 属性
+        // 2. 其次检查 data-checked 属性是否为 "true"
+        let isChecked = checkbox.checked
+
+        // 如果 JavaScript checked 是 false，再检查 HTML 属性
+        if (!isChecked) {
+          const dataChecked = li.getAttribute('data-checked')
+          if (dataChecked === 'true') {
+            isChecked = true
+          }
+        }
+
+        // 为 li 添加类名，CSS 会根据这个类名应用删除线
+        if (isChecked) {
+          li.classList.add('task-completed')
+        }
+      })
+    }
+
     // 立即处理一次
     processCodeBlocks()
+    processTaskLists()
 
     // 使用 MutationObserver 监听 DOM 变化
     const observer = new MutationObserver(() => {
       processCodeBlocks()
+      processTaskLists()
     })
 
     observer.observe(container, {
@@ -148,83 +178,13 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
     return () => {
       observer.disconnect()
     }
-  }, [html])
+  }, [content])
 
   return (
     <div
       ref={containerRef}
-      className="prose-blog"
-      dangerouslySetInnerHTML={{ __html: html || '' }}
+      className={cn('prose-blog', className)}
+      dangerouslySetInnerHTML={{ __html: content || '' }}
     />
   )
-}
-
-function markdownToHtml(md: string): string {
-  let html = md
-
-  // Code blocks with language (must be before inline code)
-  html = html.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, lang, code) => {
-    const langClass = lang ? ` language-${lang}` : ''
-    return `<pre><code class="${langClass}">${escapeHtml(code.trim())}</code></pre>`
-  })
-
-  // Headers
-  html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>')
-  html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>')
-  html = html.replace(/^# (.+)$/gm, '<h1>$1</h1>')
-
-  // Bold
-  html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-
-  // Italic
-  html = html.replace(/\*(.+?)\*/g, '<em>$1</em>')
-
-  // Inline code
-  html = html.replace(/`(.+?)`/g, '<code>$1</code>')
-
-  // Unordered list items
-  html = html.replace(/^- (.+)$/gm, '<li>$1</li>')
-  html = html.replace(/(<li>.*<\/li>\n?)+/g, '<ul>$&</ul>')
-
-  // Ordered list items
-  html = html.replace(/^\d+\. (.+)$/gm, '<li>$1</li>')
-
-  // Links
-  html = html.replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
-
-  // Task lists
-  html = html.replace(/^- \[x\] (.+)$/gmi, '<li data-checked="true"><input type="checkbox" checked disabled> $1</li>')
-  html = html.replace(/^- \[ \] (.+)$/gmi, '<li><input type="checkbox" disabled> $1</li>')
-
-  // Paragraphs (lines that aren't already wrapped in tags)
-  html = html
-    .split('\n\n')
-    .map((block) => {
-      const trimmed = block.trim()
-      if (!trimmed) return ''
-      if (
-        trimmed.startsWith('<h') ||
-        trimmed.startsWith('<ul') ||
-        trimmed.startsWith('<ol') ||
-        trimmed.startsWith('<li') ||
-        trimmed.startsWith('<pre')
-      ) {
-        return trimmed
-      }
-      return `<p>${trimmed.replace(/\n/g, '<br/>')}</p>`
-    })
-    .join('\n')
-
-  return html
-}
-
-function escapeHtml(text: string): string {
-  const map: Record<string, string> = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#039;'
-  }
-  return text.replace(/[&<>"']/g, (m) => map[m])
 }

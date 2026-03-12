@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import React, { useState } from "react"
 import Link from "next/link"
 import useSWR from "swr"
 import { MessageCircle, Send, Trash2, Loader2 } from "lucide-react"
@@ -8,20 +8,7 @@ import { useAuth } from "@/lib/auth-context"
 import { useI18n } from "@/lib/i18n-context"
 import { fetcher } from "@/lib/fetcher"
 import api from "@/services/api"
-
-interface Comment {
-  id: number
-  content: string
-  created_at: string
-  user_id: number
-  username: string
-  display_name: string
-}
-
-interface CommentSectionProps {
-  articleType: "post" | "note"
-  articleId: number
-}
+import type { CommentSectionProps, Comment } from "@/types/components"
 
 function timeAgo(date: string, locale: string) {
   const now = Date.now()

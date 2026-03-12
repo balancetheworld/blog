@@ -7,21 +7,7 @@ import { useI18n } from "@/lib/i18n-context"
 import { SectionHeader } from "./section-header"
 import { ImageLightbox } from "./image-lightbox"
 import { fetcher } from "@/lib/fetcher"
-
-interface RecentlyImage {
-  id: number
-  recently_id: number
-  image_url: string
-  sort_order: number
-}
-
-interface RecentlyItem {
-  id: number
-  content: string
-  image_url?: string | null
-  created_at: string
-  images?: RecentlyImage[]
-}
+import type { RecentlyItem } from "@/types/components"
 
 export function RecentlySection() {
   const { locale, t } = useI18n()
