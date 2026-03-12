@@ -19,15 +19,8 @@ import { useI18n } from "@/lib/i18n-context"
 import { fetcher } from "@/lib/fetcher"
 // 导入封装的 API 服务：用于分类的增删改查请求
 import api from "@/services/api"
-
-// 定义分类数据的 TypeScript 类型接口：约束分类对象的结构，避免类型错误
-interface Category {
-  id: number               // 分类唯一标识
-  slug: string             // URL 友好的分类标识（如 tech/front-end）
-  name_en: string          // 分类英文名称
-  name_zh: string          // 分类中文名称
-  sort_order: number       // 分类排序权重（数字越小越靠前）
-}
+// 导入分类类型（复用 types/index.ts 中的 Category 类型）
+import type { Category } from "@/types"
 
 // 分类表单组件：复用用于「新增分类」和「编辑分类」
 // 参数说明：

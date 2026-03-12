@@ -2,13 +2,7 @@
 
 import Link from "next/link"
 import { ChevronRight, type LucideIcon } from "lucide-react"
-
-interface SectionHeaderProps {
-  title: string
-  icon: LucideIcon
-  linkText?: string
-  linkHref?: string
-}
+import type { SectionHeaderProps } from "@/types/components"
 
 export function SectionHeader({ title, icon: Icon, linkText, linkHref }: SectionHeaderProps) {
   return (

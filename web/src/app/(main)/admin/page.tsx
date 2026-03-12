@@ -5,11 +5,11 @@ import { useRouter } from "next/navigation"
 import useSWR from "swr"
 import {
   FileText, MessageCircle, Plus, Pencil, Trash2,
-  LogOut, Loader2, ChevronDown, ChevronUp, Eye, Code, X, Tag, ImageIcon, Pin, PinOff
+  LogOut, Loader2, ChevronDown, ChevronUp, X, Tag, ImageIcon, Pin, PinOff
 } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
 import { useI18n } from "@/lib/i18n-context"
-import { MarkdownRenderer } from "@/components/markdown-renderer"
+import { RichEditor } from "@/components/editor"
 import { fetcher } from "@/lib/fetcher"
 import api from "@/services/api"
 
@@ -44,7 +44,6 @@ function ArticleEditor({
   const [tagInput, setTagInput] = useState("")
   const [saving, setSaving] = useState(false)
   const [langTab, setLangTab] = useState<"en" | "zh">("zh")
-  const [editorMode, setEditorMode] = useState<"edit" | "preview">("edit")
 
   const { data: catData } = useSWR("/api/categories", fetcher)
   const categories: { slug: string; name_en: string; name_zh: string }[] = catData?.data || []
@@ -81,10 +80,6 @@ function ArticleEditor({
       }
     }
   }, [titleZh, titleEn, slug, isEdit, type])
-
-  const currentContent = langTab === "en" ? contentEn : contentZh
-  const currentTitle = langTab === "en" ? titleEn : titleZh
-  const currentSummary = langTab === "en" ? summaryEn : summaryZh
 
   const handleSave = async () => {
     // Validate: posts must have a slug
@@ -249,82 +244,52 @@ function ArticleEditor({
           </div>
         )}
 
-        {/* Language tabs + edit/preview toggle */}
-        <div className="mb-3 flex items-center justify-between border-b border-border">
+        {/* Language tabs */}
+        <div className="mb-3 flex items-center border-b border-border">
           <div className="flex gap-2">
             <button onClick={() => setLangTab("zh")} className={`px-3 py-2 text-xs font-medium transition-colors ${langTab === "zh" ? "border-b-2 border-primary text-primary" : "text-muted-foreground"}`}>Chinese</button>
             <button onClick={() => setLangTab("en")} className={`px-3 py-2 text-xs font-medium transition-colors ${langTab === "en" ? "border-b-2 border-primary text-primary" : "text-muted-foreground"}`}>English</button>
           </div>
-          <div className="flex gap-1">
-            <button
-              onClick={() => setEditorMode("edit")}
-              className={`flex items-center gap-1 rounded-md px-2 py-1 text-xs transition-colors ${editorMode === "edit" ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground"}`}
-            >
-              <Code className="h-3 w-3" />
-              Edit
-            </button>
-            <button
-              onClick={() => setEditorMode("preview")}
-              className={`flex items-center gap-1 rounded-md px-2 py-1 text-xs transition-colors ${editorMode === "preview" ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground"}`}
-            >
-              <Eye className="h-3 w-3" />
-              Preview
-            </button>
-          </div>
         </div>
 
         {/* Content fields */}
-        {editorMode === "edit" ? (
-          <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-1">
+            <label className="text-xs font-medium text-muted-foreground">Title</label>
+            <input
+              value={langTab === "en" ? titleEn : titleZh}
+              onChange={(e) => langTab === "en" ? setTitleEn(e.target.value) : setTitleZh(e.target.value)}
+              className="rounded-lg border border-border bg-background/50 px-3 py-2 text-sm outline-none focus:border-primary"
+              placeholder="Article title..."
+            />
+          </div>
+          {type === "post" && (
             <div className="flex flex-col gap-1">
-              <label className="text-xs font-medium text-muted-foreground">Title</label>
+              <label className="text-xs font-medium text-muted-foreground">Summary</label>
               <input
-                value={langTab === "en" ? titleEn : titleZh}
-                onChange={(e) => langTab === "en" ? setTitleEn(e.target.value) : setTitleZh(e.target.value)}
+                value={langTab === "en" ? summaryEn : summaryZh}
+                onChange={(e) => langTab === "en" ? setSummaryEn(e.target.value) : setSummaryZh(e.target.value)}
                 className="rounded-lg border border-border bg-background/50 px-3 py-2 text-sm outline-none focus:border-primary"
-                placeholder="Article title..."
+                placeholder="Brief summary..."
               />
             </div>
-            {type === "post" && (
-              <div className="flex flex-col gap-1">
-                <label className="text-xs font-medium text-muted-foreground">Summary</label>
-                <input
-                  value={langTab === "en" ? summaryEn : summaryZh}
-                  onChange={(e) => langTab === "en" ? setSummaryEn(e.target.value) : setSummaryZh(e.target.value)}
-                  className="rounded-lg border border-border bg-background/50 px-3 py-2 text-sm outline-none focus:border-primary"
-                  placeholder="Brief summary..."
-                />
-              </div>
-            )}
-            <div className="flex flex-col gap-1">
-              <label className="text-xs font-medium text-muted-foreground">Content (Markdown)</label>
-              <textarea
-                value={langTab === "en" ? contentEn : contentZh}
-                onChange={(e) => langTab === "en" ? setContentEn(e.target.value) : setContentZh(e.target.value)}
-                rows={14}
-                className="rounded-lg border border-border bg-background/50 px-3 py-2 text-sm outline-none focus:border-primary font-mono resize-y"
-                placeholder="Write your content in Markdown..."
-              />
-            </div>
+          )}
+          <div className="flex flex-col gap-1">
+            <label className="text-xs font-medium text-muted-foreground">Content</label>
+            <RichEditor
+              content={langTab === "en" ? contentEn : contentZh}
+              onChange={(html) => {
+                if (langTab === "en") {
+                  setContentEn(html)
+                } else {
+                  setContentZh(html)
+                }
+              }}
+              placeholder="开始写作..."
+              className="rounded-lg border border-border overflow-hidden"
+            />
           </div>
-        ) : (
-          /* Preview mode */
-          <div className="rounded-lg border border-border bg-background/50 p-5 min-h-[300px]">
-            {currentTitle && (
-              <h1 className="text-2xl font-bold tracking-tight text-foreground mb-2 text-balance">
-                {currentTitle}
-              </h1>
-            )}
-            {currentSummary && (
-              <p className="text-sm text-muted-foreground mb-6 italic">{currentSummary}</p>
-            )}
-            {currentContent ? (
-              <MarkdownRenderer content={currentContent} />
-            ) : (
-              <p className="text-sm text-muted-foreground italic">No content to preview yet...</p>
-            )}
-          </div>
-        )}
+        </div>
 
         {/* Actions */}
         <div className="mt-5 flex justify-end gap-2">

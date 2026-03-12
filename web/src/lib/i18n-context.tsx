@@ -2,15 +2,7 @@
 
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react'
 import { locales } from '@/locales'
-
-type Locale = 'en' | 'zh'
-
-interface I18nContextType {
-  locale: Locale
-  setLocale: (locale: Locale) => void
-  t: (key: string) => string
-  isLoading: boolean
-}
+import type { I18nContextType, Locale } from '@/types/contexts'
 
 const I18nContext = createContext<I18nContextType | null>(null)
 

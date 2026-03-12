@@ -218,3 +218,12 @@ export interface CreateCommentRequest {
   article_id: number
   content: string
 }
+
+// ============================================================================
+// 统一导出所有类型模块
+// ============================================================================
+
+export * from './components'
+export * from './contexts'
+export * from './editor'
+export * from './ui'

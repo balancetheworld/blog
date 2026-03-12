@@ -6,11 +6,7 @@ import { useAuth } from "@/lib/auth-context"
 import { useI18n } from "@/lib/i18n-context"
 import Link from "next/link"
 import api from "@/services/api"
-
-interface LikeButtonProps {
-  articleType: "post" | "note"
-  articleId: number
-}
+import type { LikeButtonProps } from "@/types/components"
 
 export function LikeButton({ articleType, articleId }: LikeButtonProps) {
   const { isAuthenticated } = useAuth()

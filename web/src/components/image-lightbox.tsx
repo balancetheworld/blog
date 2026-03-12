@@ -2,13 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { X, ChevronLeft, ChevronRight } from "lucide-react"
-
-interface ImageLightboxProps {
-  images: string[]
-  initialIndex?: number
-  isOpen: boolean
-  onClose: () => void
-}
+import type { ImageLightboxProps } from "@/types/components"
 
 export function ImageLightbox({ images, initialIndex = 0, isOpen, onClose }: ImageLightboxProps) {
   const [currentIndex, setCurrentIndex] = useState(initialIndex)

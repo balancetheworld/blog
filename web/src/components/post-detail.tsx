@@ -4,32 +4,12 @@ import { useParams } from "next/navigation"
 import Link from "next/link"
 import useSWR from "swr"
 import { useI18n } from "@/lib/i18n-context"
-import { MarkdownRenderer } from "./markdown-renderer"
+import { HtmlRenderer } from "./html-renderer"
 import { LikeButton } from "./like-button"
 import { CommentSection } from "./comment-section"
 import { ArrowLeft, Eye, Heart, Tag } from "lucide-react"
 import { fetcher } from "@/lib/fetcher"
-
-interface Translation {
-  id: number
-  post_id: number
-  lang: string
-  title: string
-  summary: string
-  content: string
-}
-
-interface PostData {
-  id: number
-  slug: string
-  cover_image: string | null
-  view_count: number
-  like_count: number
-  tags?: string[]
-  created_at: string
-  updated_at: string
-  translations: Translation[]
-}
+import type { PostData } from "@/types/components"
 
 export function PostDetail() {
   const params = useParams()
@@ -126,7 +106,7 @@ export function PostDetail() {
         </header>
 
         <div className="mt-8 border-t border-border pt-8">
-          <MarkdownRenderer content={translation.content} />
+          <HtmlRenderer content={translation.content} />
         </div>
 
         {/* Like button */}
