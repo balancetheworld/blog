@@ -19,7 +19,10 @@ export function HtmlRenderer({ content, className }: HtmlRendererProps) {
     const processCodeBlocks = () => {
       const codeBlocks = container.querySelectorAll('pre:not([data-enhanced="true"])')
 
-      codeBlocks.forEach((pre) => {
+      codeBlocks.forEach((preElement) => {
+        // 类型断言
+        const pre = preElement as HTMLPreElement
+
         // 使用 WeakSet 跟踪已处理的元素
         if (processedRef.current.has(pre)) return
 
@@ -94,10 +97,10 @@ export function HtmlRenderer({ content, className }: HtmlRendererProps) {
         copyBtn.onclick = async () => {
           try {
             await navigator.clipboard.writeText(codeContent)
-            const copyIcon = copyBtn.querySelector('.copy-icon')!
-            const checkIcon = copyBtn.querySelector('.check-icon')!
-            const copyText = copyBtn.querySelector('.copy-text')!
-            const copiedText = copyBtn.querySelector('.copied-text')!
+            const copyIcon = copyBtn.querySelector('.copy-icon') as HTMLElement
+            const checkIcon = copyBtn.querySelector('.check-icon') as HTMLElement
+            const copyText = copyBtn.querySelector('.copy-text') as HTMLElement
+            const copiedText = copyBtn.querySelector('.copied-text') as HTMLElement
 
             copyIcon.style.display = 'none'
             copyText.style.display = 'none'
@@ -133,7 +136,8 @@ export function HtmlRenderer({ content, className }: HtmlRendererProps) {
     // 处理任务列表删除线 - 重写整个逻辑
     const processTaskLists = () => {
       const taskItems = container.querySelectorAll('ul[data-type="taskList"] li')
-      taskItems.forEach((li) => {
+      taskItems.forEach((liElement) => {
+        const li = liElement as HTMLElement
         const checkbox = li.querySelector('input[type="checkbox"]') as HTMLInputElement
         if (!checkbox) return
 
