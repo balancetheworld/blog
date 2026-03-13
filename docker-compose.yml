@@ -22,8 +22,8 @@ services:
   # 后端服务
   servers:
     build:
-      context: .
-      dockerfile: ./servers/Dockerfile
+      context: ./servers
+      dockerfile: Dockerfile
     container_name: blog-servers
     ports:
       - "3001:3001"
