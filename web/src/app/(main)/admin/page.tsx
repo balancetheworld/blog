@@ -459,7 +459,11 @@ export default function AdminPage() {
   const handleDeleteArticle = async (id: number, type: string) => {
     if (!confirm("Are you sure you want to delete this?")) return
     try {
-      const result = await api.delete<any>(`/api/admin/articles/${id}?type=${type}`)
+      // 根据类型调用不同的端点
+      const endpoint = type === "note"
+        ? `/api/admin/notes/${id}`
+        : `/api/admin/articles/${id}`
+      const result = await api.delete<any>(endpoint)
       if (result.success) {
         mutateArticles()
       } else {
