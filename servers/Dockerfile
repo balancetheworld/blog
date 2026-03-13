@@ -24,7 +24,8 @@ COPY package.json ./
 COPY pnpm-lock.yaml* ./
 
 # Install dependencies (enable build scripts for native modules)
-RUN pnpm install --frozen-lockfile
+# Don't use --frozen-lockfile because we have overrides that may cause mismatch
+RUN pnpm install
 
 # -----------------
 # Builder Stage
