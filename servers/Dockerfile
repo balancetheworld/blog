@@ -26,8 +26,10 @@ COPY package.json ./
 # Don't use --frozen-lockfile since we're in a monorepo without independent lockfile
 RUN pnpm install
 
-# Rebuild better-sqlite3 to ensure native module is compiled
-RUN pnpm rebuild better-sqlite3
+# Manually compile better-sqlite3 native module
+RUN cd node_modules/.pnpm/better-sqlite3@*/node_modules/better-sqlite3 && \
+    npm rebuild 2>&1 || \
+    (npx node-gyp rebuild 2>&1 && echo "Build completed")
 
 # -----------------
 # Builder Stage
