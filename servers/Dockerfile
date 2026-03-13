@@ -21,9 +21,10 @@ RUN apk add --no-cache python3 make g++ sqlite
 
 # Copy package files (independent project, no workspace)
 COPY package.json ./
+COPY pnpm-lock.yaml* ./
 
 # Install dependencies (enable build scripts for native modules)
-RUN pnpm install --frozen-lockfile --ignore-scripts=false 2>/dev/null || pnpm install --ignore-scripts=false
+RUN pnpm install --frozen-lockfile
 
 # -----------------
 # Builder Stage
@@ -33,10 +34,13 @@ FROM node:20-alpine AS builder
 # Set working directory
 WORKDIR /app
 
-# Enable pnpm via Corepack (使用固定版本避免网络问题)
+# Enable pnpm via Corepack
 RUN corepack enable && corepack prepare pnpm@10 --activate
 
-# Copy compiled dependencies from deps stage
+# Install build tools (needed in case we need to rebuild)
+RUN apk add --no-cache python3 make g++
+
+# Copy node_modules from deps stage (includes compiled better-sqlite3)
 COPY --from=deps /app/node_modules ./node_modules
 
 # Copy source code
@@ -58,16 +62,17 @@ ENV NODE_ENV=production \
 
 WORKDIR /app
 
-# Install runtime dependencies
+# Install runtime dependencies (shared libraries for native modules)
 RUN apk add --no-cache libc6-compat sqlite
 
-# Enable pnpm via Corepack (使用固定版本避免网络问题)
+# Enable pnpm via Corepack
 RUN corepack enable && corepack prepare pnpm@10 --activate
 
 # Copy package.json for metadata
 COPY package.json ./
 
-# Copy compiled dependencies (with native modules)
+# Copy ENTIRE node_modules from deps (includes compiled .node files)
+# This is crucial for better-sqlite3!
 COPY --from=deps /app/node_modules ./node_modules
 
 # Copy built source
