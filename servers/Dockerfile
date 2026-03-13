@@ -26,6 +26,9 @@ COPY package.json ./
 # Don't use --frozen-lockfile since we're in a monorepo without independent lockfile
 RUN pnpm install --ignore-scripts=false
 
+# Explicitly rebuild better-sqlite3 to ensure native module is compiled correctly
+RUN pnpm rebuild better-sqlite3
+
 # -----------------
 # Builder Stage
 # -----------------
