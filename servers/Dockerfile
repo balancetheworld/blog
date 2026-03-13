@@ -22,8 +22,12 @@ RUN apk add --no-cache python3 make g++ sqlite
 # Copy package files (independent project, no workspace)
 COPY package.json ./
 
-# Install dependencies (enable build scripts for native modules)
-RUN pnpm install --frozen-lockfile --ignore-scripts=false 2>/dev/null || pnpm install --ignore-scripts=false
+# Install dependencies
+# Don't use --frozen-lockfile since we're in a monorepo without independent lockfile
+RUN pnpm install
+
+# Rebuild better-sqlite3 to ensure native module is compiled
+RUN pnpm rebuild better-sqlite3
 
 # -----------------
 # Builder Stage
