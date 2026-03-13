@@ -42,3 +42,6 @@ build/
 *.tmp
 *.temp
 .cache/
+
+# Spec workflow files
+.spec-workflow/
