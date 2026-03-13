@@ -71,4 +71,11 @@ export const CategoryModel = {
     const db = getDatabase()
     db.prepare('DELETE FROM categories WHERE id = ?').run(id)
   },
+
+  // 检查是否有文章使用该分类
+  hasArticles: (slug: string): boolean => {
+    const db = getDatabase()
+    const result = db.prepare('SELECT COUNT(*) as count FROM posts WHERE category = ?').get(slug) as { count: number }
+    return result.count > 0
+  },
 }

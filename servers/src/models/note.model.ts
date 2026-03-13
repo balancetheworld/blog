@@ -84,7 +84,25 @@ export const NoteModel = {
 
   delete: (id: number): void => {
     const db = getDatabase()
-    db.prepare('DELETE FROM notes WHERE id = ?').run(id)
+    // 使用事务确保删除操作的原子性
+    const deleteNote = db.transaction(() => {
+      // 先删除关联数据
+      // 1. 删除翻译数据（note_translations 有外键约束，必须先删除）
+      db.prepare('DELETE FROM note_translations WHERE note_id = ?').run(id)
+
+      // 2. 删除评论
+      db.prepare('DELETE FROM comments WHERE article_type = ? AND article_id = ?').run('note', id)
+
+      // 3. 删除点赞
+      db.prepare('DELETE FROM likes WHERE article_type = ? AND article_id = ?').run('note', id)
+
+      // 最后删除主记录
+      const result = db.prepare('DELETE FROM notes WHERE id = ?').run(id)
+      if (result.changes === 0) {
+        throw new Error('Note not found')
+      }
+    })
+    deleteNote()
   },
 
   incrementViewCount: (id: number): void => {

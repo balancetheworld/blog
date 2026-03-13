@@ -60,6 +60,12 @@ export const CategoryService = {
       throw new Error('Category not found')
     }
 
+    // 检查是否有文章使用该分类
+    const hasArticles = CategoryModel.hasArticles(category.slug)
+    if (hasArticles) {
+      throw new Error('Cannot delete category: articles are still using it')
+    }
+
     CategoryModel.delete(id)
   },
 }
