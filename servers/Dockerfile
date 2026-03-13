@@ -1,50 +1,37 @@
-# -----------------------------------------------------------------------------
-# Blog Servers Backend - Single-stage Dockerfile
-# Koa.js backend with TypeScript and better-sqlite3
-# Package manager: pnpm (via Corepack)
-# Using single-stage build to avoid native module issues
-# -----------------------------------------------------------------------------
-
+# Blog Servers Backend - Monorepo Dockerfile
 FROM node:20-alpine
 
-# Set working directory
 WORKDIR /app
 
-# Install build tools for native modules (better-sqlite3)
+# Install build tools for native modules
 RUN apk add --no-cache python3 make g++ sqlite
 
-# Enable pnpm via Corepack
+# Enable pnpm
 RUN corepack enable && corepack prepare pnpm@10 --activate
 
-# Copy package files
-COPY package.json ./
-COPY pnpm-lock.yaml* ./
-COPY tsconfig.json ./
+# Copy workspace config and lockfile from root
+COPY pnpm-workspace.yaml pnpm-lock.yaml ./
+COPY servers/package.json ./servers/
 
 # Install dependencies
-RUN pnpm install
+RUN pnpm install --filter @blog/servers
 
-# Copy source code
-COPY src ./src
+# Copy source and build
+COPY servers/tsconfig.json ./servers/
+COPY servers/src ./servers/src
+RUN pnpm --filter @blog/servers run build
 
-# Build TypeScript
-RUN pnpm run build
+# Setup production environment
+ENV NODE_ENV=production PORT=3001
+WORKDIR /app/servers
 
-# Set production environment
-ENV NODE_ENV=production \
-    PORT=3001
-
-# Create database directory and set permissions
-RUN mkdir -p /app/database
-
-# Switch to non-root user
-RUN addgroup -S nodejs && \
+# Create database directory and setup non-root user
+RUN mkdir -p /app/servers/database && \
+    addgroup -S nodejs && \
     adduser -S nodejs -G nodejs && \
     chown -R nodejs:nodejs /app
+
 USER nodejs
 
-# Expose application port
 EXPOSE 3001
-
-# Start the server
 CMD ["node", "dist/server.js"]
