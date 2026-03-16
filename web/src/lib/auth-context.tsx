@@ -67,6 +67,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isLoading,
         isAuthenticated: !!user,
         isAdmin: user?.role === 'admin',
+        emailVerified: user?.emailVerified ?? false,
         login,
         register,
         logout,

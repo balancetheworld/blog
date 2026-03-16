@@ -10,6 +10,9 @@ export interface AuthUser {
   username: string
   displayName: string
   role: string
+  email?: string
+  emailVerified?: boolean
+  newEmail?: string | null
 }
 
 /** 认证上下文类型 */
@@ -18,6 +21,7 @@ export interface AuthContextType {
   isLoading: boolean
   isAuthenticated: boolean
   isAdmin: boolean
+  emailVerified: boolean
   login: (username: string, password: string) => Promise<{ success: boolean; error?: string }>
   register: (username: string, password: string, displayName: string) => Promise<{ success: boolean; error?: string }>
   logout: () => Promise<void>

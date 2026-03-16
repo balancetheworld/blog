@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
 import useSWR from "swr"
 import {
   FileText, MessageCircle, Plus, Pencil, Trash2,
-  LogOut, Loader2, ChevronDown, ChevronUp, X, Tag, ImageIcon, Pin, PinOff
+  LogOut, Loader2, ChevronDown, ChevronUp, X, Tag, ImageIcon, Pin, PinOff, Users
 } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
 import { useI18n } from "@/lib/i18n-context"
@@ -518,13 +519,22 @@ export default function AdminPage() {
             {t("admin.welcome") || "Welcome"}, {user?.displayName}
           </p>
         </div>
-        <button
-          onClick={handleLogout}
-          className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground hover:bg-muted/50"
-        >
-          <LogOut className="h-3.5 w-3.5" />
-          {t("admin.logout") || "Logout"}
-        </button>
+        <div className="flex items-center gap-2">
+          <Link
+            href="/admin/users"
+            className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium text-purple-500 transition-colors hover:bg-purple-500/10"
+          >
+            <Users className="h-3.5 w-3.5" />
+            {t("admin.users") || "Users"}
+          </Link>
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground hover:bg-muted/50"
+          >
+            <LogOut className="h-3.5 w-3.5" />
+            {t("admin.logout") || "Logout"}
+          </button>
+        </div>
       </div>
 
       {/* Tabs */}

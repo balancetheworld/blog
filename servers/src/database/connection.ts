@@ -165,8 +165,8 @@ function initTables(database: Database.Database): void {
 function migrateDatabase(database: Database.Database): void {
   try {
     // 检查 posts 表是否有 is_pinned 列
-    const columns = database.prepare("PRAGMA table_info(posts)").all() as Array<{ name: string }>
-    const hasPinnedColumn = columns.some((col) => col.name === 'is_pinned')
+    const postsColumns = database.prepare("PRAGMA table_info(posts)").all() as Array<{ name: string }>
+    const hasPinnedColumn = postsColumns.some((col) => col.name === 'is_pinned')
 
     if (!hasPinnedColumn) {
       // 添加 is_pinned 列
@@ -175,6 +175,85 @@ function migrateDatabase(database: Database.Database): void {
     }
   } catch (error) {
     console.error('Database migration error:', error)
+  }
+
+  // 邮箱相关字段迁移
+  migrateEmailFields(database)
+}
+
+// 邮箱功能数据库迁移
+function migrateEmailFields(database: Database.Database): void {
+  try {
+    const userColumns = database.prepare("PRAGMA table_info(admin_users)").all() as Array<{ name: string }>
+
+    // 添加 email 字段（不使用 UNIQUE 约束，改用唯一索引）
+    if (!userColumns.some((col) => col.name === 'email')) {
+      database.prepare('ALTER TABLE admin_users ADD COLUMN email TEXT').run()
+      console.log('Database migration: Added email column to admin_users table')
+    }
+
+    // 添加 email_verified 字段
+    if (!userColumns.some((col) => col.name === 'email_verified')) {
+      database.prepare('ALTER TABLE admin_users ADD COLUMN email_verified INTEGER DEFAULT 0').run()
+      console.log('Database migration: Added email_verified column to admin_users table')
+    }
+
+    // 添加 email_verification_token 字段
+    if (!userColumns.some((col) => col.name === 'email_verification_token')) {
+      database.prepare('ALTER TABLE admin_users ADD COLUMN email_verification_token TEXT').run()
+      console.log('Database migration: Added email_verification_token column to admin_users table')
+    }
+
+    // 添加 email_verification_expires 字段
+    if (!userColumns.some((col) => col.name === 'email_verification_expires')) {
+      database.prepare('ALTER TABLE admin_users ADD COLUMN email_verification_expires TEXT').run()
+      console.log('Database migration: Added email_verification_expires column to admin_users table')
+    }
+
+    // 添加 password_reset_token 字段
+    if (!userColumns.some((col) => col.name === 'password_reset_token')) {
+      database.prepare('ALTER TABLE admin_users ADD COLUMN password_reset_token TEXT').run()
+      console.log('Database migration: Added password_reset_token column to admin_users table')
+    }
+
+    // 添加 password_reset_expires 字段
+    if (!userColumns.some((col) => col.name === 'password_reset_expires')) {
+      database.prepare('ALTER TABLE admin_users ADD COLUMN password_reset_expires TEXT').run()
+      console.log('Database migration: Added password_reset_expires column to admin_users table')
+    }
+
+    // 添加 new_email 字段
+    if (!userColumns.some((col) => col.name === 'new_email')) {
+      database.prepare('ALTER TABLE admin_users ADD COLUMN new_email TEXT').run()
+      console.log('Database migration: Added new_email column to admin_users table')
+    }
+
+    // 添加 new_email_verification_token 字段
+    if (!userColumns.some((col) => col.name === 'new_email_verification_token')) {
+      database.prepare('ALTER TABLE admin_users ADD COLUMN new_email_verification_token TEXT').run()
+      console.log('Database migration: Added new_email_verification_token column to admin_users table')
+    }
+
+    // 添加 new_email_expires 字段
+    if (!userColumns.some((col) => col.name === 'new_email_expires')) {
+      database.prepare('ALTER TABLE admin_users ADD COLUMN new_email_expires TEXT').run()
+      console.log('Database migration: Added new_email_expires column to admin_users table')
+    }
+
+    // 创建唯一索引以提高查询性能并确保邮箱唯一性
+    // 使用唯一索引而不是 UNIQUE 约束，这样可以允许多个 NULL 值
+    try {
+      // 创建唯一索引（过滤 NULL 值，确保非空邮箱唯一）
+      database.prepare('CREATE UNIQUE INDEX IF NOT EXISTS idx_users_email_unique ON admin_users(email) WHERE email IS NOT NULL').run()
+      database.prepare('CREATE INDEX IF NOT EXISTS idx_users_email_verification_token ON admin_users(email_verification_token)').run()
+      database.prepare('CREATE INDEX IF NOT EXISTS idx_users_password_reset_token ON admin_users(password_reset_token)').run()
+      console.log('Database migration: Created email-related indexes')
+    } catch (indexError) {
+      // 索引可能已存在，忽略错误
+      console.log('Database migration: Email indexes may already exist')
+    }
+  } catch (error) {
+    console.error('Email fields migration error:', error)
   }
 }
 
