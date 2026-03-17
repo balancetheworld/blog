@@ -33,11 +33,11 @@ COPY servers/src ./servers/src
 # Install all dependencies
 RUN pnpm install
 
-# Build TypeScript (run from /app to avoid WORKDIR issues)
-RUN cd /app/servers && pnpm run build
+# Build TypeScript
+RUN --mount=type=cache,target=/root/.pnpm-store pnpm --dir /app/servers run build
 
-# Rebuild better-sqlite3 for Alpine (must run from /app)
-RUN pnpm rebuild better-sqlite3
+# Rebuild better-sqlite3 for Alpine - must run from servers dir
+RUN --mount=type=cache,target=/root/.pnpm-store pnpm --dir /app/servers rebuild better-sqlite3
 
 # Create directories
 RUN mkdir -p /app/database /app/public/uploads && \

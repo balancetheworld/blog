@@ -31,7 +31,8 @@ COPY web/next.config.mjs ./web/next.config.mjs
 COPY web ./web
 
 # Install dependencies and build
-RUN cd /app/web && pnpm install && pnpm run build
+RUN --mount=type=cache,target=/root/.pnpm-store pnpm --dir /app/web install
+RUN --mount=type=cache,target=/root/.pnpm-store pnpm --dir /app/web run build
 
 # Create non-root user
 RUN addgroup -S nodejs && \
@@ -40,10 +41,8 @@ RUN addgroup -S nodejs && \
 
 USER nextjs
 
-# standalone structure: server.js is at /app/web/.next/standalone/web/server.js
 WORKDIR /app/web/.next/standalone/web
 
 EXPOSE 3000
 
-# Start the server
 CMD ["node", "server.js"]
