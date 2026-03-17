@@ -29,9 +29,10 @@ export const uploadController = {
   uploadImage: async (ctx: Context) => {
     try {
       // 使用 middleware 处理文件上传
-      await new Promise<void>((resolve, reject) => {
-        uploadSingle(ctx, () => {
+      await new Promise<void>((resolve) => {
+        uploadSingle(ctx, async () => {
           resolve()
+          return Promise.resolve()
         })
       })
 

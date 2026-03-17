@@ -13,7 +13,7 @@ import { corsMiddleware } from './middleware/cors.middleware'
 import { config } from './config'
 import { getDatabase } from './database/connection'
 
-const app = new Koa()
+const app = new (Koa as any)()
 
 // Initialize database
 console.log('Initializing database...')
