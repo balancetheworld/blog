@@ -27,7 +27,6 @@ COPY pnpm-workspace.yaml ./pnpm-workspace.yaml
 COPY servers/package.json ./servers/package.json
 
 # Install dependencies
-# Don't use --frozen-lockfile since we're in a monorepo without independent lockfile
 RUN pnpm install
 
 # Rebuild better-sqlite3 for Alpine
@@ -43,13 +42,16 @@ WORKDIR /app
 # Enable pnpm via Corepack
 RUN corepack enable && corepack prepare pnpm@10 --activate
 
-# Copy dependencies from deps stage
-COPY --from=deps /app/node_modules ./node_modules
+# Install build tools
+RUN apk add --no-cache python3 make g++
 
 # Copy monorepo config
 COPY pnpm-lock.yaml ./pnpm-lock.yaml
 COPY pnpm-workspace.yaml ./pnpm-workspace.yaml
 COPY servers/package.json ./servers/package.json
+
+# Install all dependencies (including devDependencies for TypeScript)
+RUN pnpm install
 
 # Copy servers source
 COPY servers/tsconfig.json ./servers/tsconfig.json
@@ -79,7 +81,7 @@ RUN corepack enable && corepack prepare pnpm@10 --activate
 # Copy package.json
 COPY servers/package.json ./servers/package.json
 
-# Copy compiled dependencies with native modules
+# Copy only production dependencies from deps stage
 COPY --from=deps /app/node_modules ./node_modules
 
 # Copy built source
