@@ -55,9 +55,12 @@ RUN addgroup -S nodejs && \
     adduser -S nextjs -G nodejs
 
 # Copy necessary files from builder
+# Next.js standalone 在 monorepo 中的结构是 standalone/web/
 COPY --from=builder /app/web/public ./public
-COPY --from=builder --chown=nextjs:nodejs /app/web/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/web/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/web/.next/standalone/web/node_modules ./node_modules
+COPY --from=builder --chown=nextjs:nodejs /app/web/.next/standalone/web/package.json ./package.json
+COPY --from=builder --chown=nextjs:nodejs /app/web/.next/standalone/web/server.js ./server.js
+COPY --from=builder --chown=nextjs:nodejs /app/web/.next/standalone/web/.next ./.next
 
 # Switch to non-root user
 USER nextjs
