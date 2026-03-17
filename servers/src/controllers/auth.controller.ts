@@ -18,12 +18,12 @@ const COOKIE_OPTIONS = {
 
 // 设置认证 Cookie 的辅助函数
 function setAuthCookie(ctx: Context, token: string): void {
-  ctx.cookies.set('blog_session', token, COOKIE_OPTIONS)
+  ctx.cookies?.set('blog_session', token, COOKIE_OPTIONS)
 }
 
 // 清除认证 Cookie 的辅助函数
 function clearAuthCookie(ctx: Context): void {
-  ctx.cookies.set('blog_session', '', {
+  ctx.cookies?.set('blog_session', '', {
     ...COOKIE_OPTIONS,
     maxAge: 0,
   })
@@ -93,7 +93,7 @@ export const authController = {
   },
 
   logout: async (ctx: Context) => {
-    const token = ctx.cookies.get('blog_session')
+    const token = ctx.cookies?.get('blog_session')
     if (token) {
       AuthService.logout(token)
     }

@@ -2,7 +2,7 @@
 import dotenv from 'dotenv'
 dotenv.config()
 
-import Koa from 'koa'
+import Koa = require('koa')
 import bodyParser from 'koa-bodyparser'
 import serve from 'koa-static'
 import path from 'path'
@@ -46,7 +46,7 @@ app.use(router.routes())
 app.use(router.allowedMethods())
 
 // Error event listener
-app.on('error', (err, ctx) => {
+app.on('error', (err: Error, ctx: Koa.Context) => {
   console.error('Server error:', err)
 })
 

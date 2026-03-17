@@ -41,7 +41,7 @@ function verifySessionFromToken(token: string): SessionState {
 }
 
 export async function authMiddleware(ctx: Context, next: Next): Promise<void> {
-  const token = ctx.cookies.get(SESSION_COOKIE)
+  const token = ctx.cookies?.get(SESSION_COOKIE)
 
   if (!token) {
     ctx.status = 401
