@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { Lock, Mail, Loader2, AlertCircle } from "lucide-react"
+import { Lock, Mail, User, Loader2, AlertCircle } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
 import { useI18n } from "@/lib/i18n-context"
 
@@ -11,10 +11,12 @@ export default function LoginPage() {
   const router = useRouter()
   const { login, isAuthenticated, isLoading: authLoading, refresh } = useAuth()
   const { locale } = useI18n()
-  const [email, setEmail] = useState("")
+  const [account, setAccount] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
+
+  const isEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
 
   useEffect(() => {
     if (!authLoading && isAuthenticated) {
@@ -39,12 +41,16 @@ export default function LoginPage() {
     setError("")
     setLoading(true)
 
-    // 尝试邮箱登录
     try {
-      const response = await fetch("/api/auth/login-email", {
+      const useEmail = isEmail(account)
+      const endpoint = useEmail ? "/api/auth/login-email" : "/api/auth/login"
+      const body = useEmail
+        ? { email: account, password }
+        : { username: account, password }
+      const response = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify(body),
       })
       const data = await response.json()
       if (!response.ok || !data.success) {
@@ -72,7 +78,7 @@ export default function LoginPage() {
               {locale === "zh" ? "欢迎回来" : "Welcome Back"}
             </h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              {locale === "zh" ? "使用邮箱登录您的账户" : "Sign in to your account with email"}
+              {locale === "zh" ? "登录您的账户" : "Sign in to your account"}
             </p>
           </div>
 
@@ -87,20 +93,23 @@ export default function LoginPage() {
           {/* Form */}
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div className="flex flex-col gap-1.5">
-              <label htmlFor="email" className="text-xs font-medium text-muted-foreground">
-                {locale === "zh" ? "邮箱地址" : "Email Address"}
+              <label htmlFor="account" className="text-xs font-medium text-muted-foreground">
+                {locale === "zh" ? "用户名或邮箱" : "Username or Email"}
               </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                {isEmail(account)
+                  ? <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  : <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                }
                 <input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  id="account"
+                  type="text"
+                  value={account}
+                  onChange={(e) => setAccount(e.target.value)}
                   className="w-full rounded-lg border border-border bg-background/50 py-2.5 pl-10 pr-3 text-sm text-foreground outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary/30"
-                  placeholder="you@example.com"
+                  placeholder={locale === "zh" ? "用户名或邮箱" : "username or email"}
                   required
-                  autoComplete="email"
+                  autoComplete="username"
                 />
               </div>
             </div>
