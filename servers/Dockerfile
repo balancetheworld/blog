@@ -41,7 +41,7 @@ RUN pnpm rebuild better-sqlite3
 RUN pnpm run build
 
 # Clean up dev dependencies
-RUN pnpm prune --prod
+RUN CI=true pnpm prune --prod
 
 # Create directories
 RUN mkdir -p /app/database /app/public/uploads && \
