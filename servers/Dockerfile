@@ -6,36 +6,6 @@
 # -----------------------------------------------------------------------------
 
 # -----------------
-# Dependencies Stage
-# -----------------
-FROM node:20-alpine AS deps
-
-# Set working directory
-WORKDIR /app
-
-# Enable pnpm via Corepack
-RUN corepack enable && corepack prepare pnpm@10 --activate
-
-# Install build tools for native modules (better-sqlite3)
-RUN apk add --no-cache python3 make g++ sqlite
-
-# Copy monorepo package files
-COPY pnpm-lock.yaml ./pnpm-lock.yaml
-COPY pnpm-workspace.yaml ./pnpm-workspace.yaml
-
-# Copy servers package.json
-COPY servers/package.json ./servers/package.json
-
-# Install dependencies
-RUN pnpm install
-
-# Change to servers directory for rebuild
-WORKDIR /app/servers
-
-# Rebuild better-sqlite3 for Alpine
-RUN pnpm rebuild better-sqlite3
-
-# -----------------
 # Builder Stage
 # -----------------
 FROM node:20-alpine AS builder
@@ -45,7 +15,7 @@ WORKDIR /app
 # Enable pnpm via Corepack
 RUN corepack enable && corepack prepare pnpm@10 --activate
 
-# Install build tools
+# Install build tools for native modules
 RUN apk add --no-cache python3 make g++
 
 # Copy monorepo config
@@ -73,7 +43,7 @@ FROM node:20-alpine AS runner
 ENV NODE_ENV=production \
     PORT=3001
 
-WORKDIR /app/servers
+WORKDIR /app
 
 # Install runtime dependencies
 RUN apk add --no-cache libc6-compat sqlite
@@ -81,22 +51,24 @@ RUN apk add --no-cache libc6-compat sqlite
 # Enable pnpm
 RUN corepack enable && corepack prepare pnpm@10 --activate
 
-# Copy package.json and workspace config
-COPY servers/package.json ./package.json
+# Copy workspace config files
 COPY pnpm-workspace.yaml ./pnpm-workspace.yaml
 COPY pnpm-lock.yaml ./pnpm-lock.yaml
+COPY servers/package.json ./servers/package.json
 
-# Copy all dependencies from deps stage (pnpm uses virtual store)
-COPY --from=deps /app/node_modules ./node_modules
+# Install ONLY production dependencies
+RUN pnpm install --prod
 
-# Copy built source
+# Copy built source from builder
 COPY --from=builder /app/servers/dist ./dist
 
 # Create directories
-RUN mkdir -p /app/database /app/public/uploads && \
+RUN mkdir -p database public/uploads && \
     chown -R node:node /app
 
 USER node
+
+WORKDIR /app
 
 EXPOSE 3001
 
