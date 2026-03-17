@@ -19,7 +19,7 @@ RUN apk add --no-cache libc6-compat sqlite python3 make g++
 # Enable pnpm via Corepack
 RUN corepack enable && corepack prepare pnpm@10 --activate
 
-# Copy monorepo config files (required for pnpm workspace)
+# Copy monorepo config files
 COPY pnpm-workspace.yaml ./pnpm-workspace.yaml
 COPY pnpm-lock.yaml ./pnpm-lock.yaml
 
@@ -34,10 +34,10 @@ COPY servers/src ./servers/src
 RUN pnpm install
 
 # Build TypeScript
-RUN --mount=type=cache,target=/root/.pnpm-store pnpm --dir /app/servers run build
+RUN pnpm --dir /app/servers run build
 
-# Rebuild better-sqlite3 for Alpine - must run from servers dir
-RUN --mount=type=cache,target=/root/.pnpm-store pnpm --dir /app/servers rebuild better-sqlite3
+# Rebuild better-sqlite3 for Alpine Linux
+RUN pnpm rebuild better-sqlite3
 
 # Create directories
 RUN mkdir -p /app/database /app/public/uploads && \
@@ -49,5 +49,4 @@ WORKDIR /app/servers
 
 EXPOSE 3001
 
-# Start the server
 CMD ["node", "dist/server.js"]

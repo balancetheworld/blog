@@ -51,11 +51,15 @@ RUN corepack enable && corepack prepare pnpm@10 --activate
 RUN addgroup -S nodejs && \
     adduser -S nextjs -G nodejs
 
-# Copy standalone output from builder
-COPY --from=builder --chown=nextjs:nodejs /app/web/.next/standalone ./
+# Copy standalone output structure:
+# standalone/
+#   ├── node_modules/    -> /app/node_modules/
+#   └── web/             -> /app/web/
+#       └── server.js    -> /app/web/server.js
+COPY --from=builder --chown=nextjs:nodejs /app/web/.next/standalone/node_modules ./node_modules
+COPY --from=builder --chown=nextjs:nodejs /app/web/.next/standalone/web ./web
 
 # Copy .next/static (NOT included in standalone, required for Next.js)
-# static must go into web/.next/static because that's where the app is
 COPY --from=builder --chown=nextjs:nodejs /app/web/.next/static ./web/.next/static
 
 # Copy public assets
@@ -63,7 +67,7 @@ COPY --from=builder --chown=nextjs:nodejs /app/web/public ./public
 
 USER nextjs
 
-WORKDIR /app
+WORKDIR /app/web
 
 EXPOSE 3000
 
