@@ -14,6 +14,7 @@ import { config } from './config'
 import { getDatabase } from './database/connection'
 
 const app = new (Koa as any)()
+app.proxy = true
 
 // Initialize database
 console.log('Initializing database...')
