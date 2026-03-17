@@ -12,6 +12,9 @@ FROM node:24-alpine AS builder
 
 WORKDIR /app
 
+ARG BACKEND_URL=http://servers:3001
+ENV BACKEND_URL=${BACKEND_URL}
+
 # Enable pnpm via Corepack
 RUN corepack enable && corepack prepare pnpm@10 --activate
 
@@ -63,8 +66,8 @@ COPY --from=builder --chown=nextjs:nodejs /app/web/.next/standalone/web ./web
 # Copy .next/static (NOT included in standalone, required for Next.js)
 COPY --from=builder --chown=nextjs:nodejs /app/web/.next/static ./web/.next/static
 
-# Copy public assets
-COPY --from=builder --chown=nextjs:nodejs /app/web/public ./public
+# Copy public assets (Next.js expects public/ relative to server.js location)
+COPY --from=builder --chown=nextjs:nodejs /app/web/public ./web/public
 
 USER nextjs
 

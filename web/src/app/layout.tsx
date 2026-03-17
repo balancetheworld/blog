@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import { Noto_Sans_SC, JetBrains_Mono } from 'next/font/google'
-import { Analytics } from '@vercel/analytics/next'
 import { I18nProvider } from '@/lib/i18n-context'
 import { AuthProvider } from '@/lib/auth-context'
 import { ThemeProvider } from '@/components/theme-provider'
@@ -45,7 +44,6 @@ export default function RootLayout({
             </I18nProvider>
           </AuthProvider>
         </ThemeProvider>
-        <Analytics />
       </body>
     </html>
   )
