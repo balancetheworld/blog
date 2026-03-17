@@ -33,15 +33,15 @@ COPY servers/src ./servers/src
 # Install all dependencies (including devDependencies for TypeScript build)
 RUN pnpm install
 
-# Change to servers directory and rebuild native module
-WORKDIR /app/servers
-RUN pnpm rebuild better-sqlite3
-
 # Build TypeScript
+WORKDIR /app/servers
 RUN pnpm run build
 
-# Clean up dev dependencies
-RUN CI=true pnpm prune --prod
+# Rebuild better-sqlite3 for Alpine AFTER build
+RUN pnpm rebuild better-sqlite3
+
+# Clean up dev dependencies (don't use prune as it may remove native builds)
+RUN pnpm install --prod --force
 
 # Create directories
 RUN mkdir -p /app/database /app/public/uploads && \

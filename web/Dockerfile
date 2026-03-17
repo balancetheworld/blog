@@ -43,10 +43,11 @@ RUN addgroup -S nodejs && \
 # Switch to non-root user
 USER nextjs
 
-WORKDIR /app/web
+# Set working directory to standalone output location
+WORKDIR /app/web/.next/standalone/web
 
 # Expose application port
 EXPOSE 3000
 
-# Start the server using standalone output
-CMD ["node", ".next/standalone/server.js"]
+# Start the server
+CMD ["node", "server.js"]
