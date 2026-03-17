@@ -1,16 +1,16 @@
 import Database from 'better-sqlite3'
 import path from 'path'
 import fs from 'fs'
+import { config } from '../config'
 
 let db: Database.Database | null = null
 
 export function getDatabase(): Database.Database {
   if (db) return db
 
-  const dbDir = path.join(__dirname, '../../database')
-  const dbPath = path.join(dbDir, 'blog.db')
+  const dbPath = config.databasePath
+  const dbDir = path.dirname(dbPath)
 
-  // 确保目录存在
   if (!fs.existsSync(dbDir)) {
     fs.mkdirSync(dbDir, { recursive: true })
   }
