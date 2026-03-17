@@ -27,13 +27,8 @@ COPY web/package.json ./web/package.json
 RUN pnpm install
 
 # Copy web source
-COPY web/package.json ./web/package.json
-COPY web/tsconfig.json ./web/tsconfig.json
-COPY web/next.config.mjs ./web/next.config.mjs
 COPY web/src ./web/src
 COPY web/public ./web/public
-COPY web/tailwind.config.ts ./web/tailwind.config.ts
-COPY web/postcss.config.mjs ./web/postcss.config.mjs
 
 # Build Next.js application
 WORKDIR /app/web
