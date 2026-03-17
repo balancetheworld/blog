@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { Mail, Lock, User, Loader2, AlertCircle, CheckCircle2, ArrowLeft } from "lucide-react"
+import { Mail, Lock, User, Loader2, AlertCircle, CheckCircle2, ArrowLeft, Eye, EyeOff } from "lucide-react"
 import Link from "next/link"
 import { useI18n } from "@/lib/i18n-context"
 
@@ -11,8 +11,13 @@ export default function RegisterPage() {
   const { locale } = useI18n()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
   const [displayName, setDisplayName] = useState("")
   const [code, setCode] = useState("")
+
+  // 密码可见性状态
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
   // 验证码状态
   const [codeSent, setCodeSent] = useState(false)
@@ -119,6 +124,13 @@ export default function RegisterPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    // 验证密码是否匹配
+    if (password !== confirmPassword) {
+      setError(locale === "zh" ? "两次输入的密码不一致" : "Passwords do not match")
+      return
+    }
+
     setError("")
     setLoading(true)
 
@@ -304,19 +316,58 @@ export default function RegisterPage() {
                 <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <input
                   id="password"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full rounded-lg border border-border bg-background/50 py-2.5 pl-10 pr-3 text-sm text-foreground outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary/30"
+                  className="w-full rounded-lg border border-border bg-background/50 py-2.5 pl-10 pr-10 text-sm text-foreground outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary/30"
                   placeholder="********"
                   required
                   autoComplete="new-password"
                   minLength={6}
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
               </div>
               <p className="text-xs text-muted-foreground">
                 {locale === "zh" ? "密码至少需要 6 个字符" : "Password must be at least 6 characters"}
               </p>
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="confirmPassword" className="text-xs font-medium text-muted-foreground">
+                {locale === "zh" ? "确认密码" : "Confirm Password"}
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <input
+                  id="confirmPassword"
+                  type={showConfirmPassword ? "text" : "password"}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="w-full rounded-lg border border-border bg-background/50 py-2.5 pl-10 pr-10 text-sm text-foreground outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary/30"
+                  placeholder="********"
+                  required
+                  autoComplete="new-password"
+                  minLength={6}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
+              {confirmPassword && password !== confirmPassword && (
+                <p className="text-xs text-destructive">
+                  {locale === "zh" ? "两次输入的密码不一致" : "Passwords do not match"}
+                </p>
+              )}
             </div>
 
             <button

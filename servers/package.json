@@ -8,16 +8,20 @@
   },
   "main": "dist/server.js",
   "scripts": {
-    "dev": "tsx watch src/server.ts",
+    "dev": "NODE_OPTIONS='-r dotenv/config' tsx watch src/server.ts",
     "build": "tsc",
-    "start": "node dist/server.js"
+    "start": "NODE_OPTIONS='-r dotenv/config' node dist/server.js"
   },
   "dependencies": {
     "@koa/cors": "^5.0.0",
+    "@koa/multer": "^4.0.0",
     "better-sqlite3": "^9.6.0",
+    "dotenv": "^17.3.1",
     "koa": "^2.16.3",
     "koa-bodyparser": "^4.4.0",
     "koa-router": "^13.0.1",
+    "koa-static": "^5.0.0",
+    "multer": "^2.1.1",
     "resend": "^6.9.3",
     "zod": "^3.24.1"
   },
@@ -26,6 +30,7 @@
     "@types/koa": "^2.15.0",
     "@types/koa-bodyparser": "^4.3.12",
     "@types/koa-router": "^7.4.8",
+    "@types/multer": "^2.1.0",
     "@types/node": "^22.10.5",
     "tsx": "^4.19.0",
     "typescript": "^5.7.3"

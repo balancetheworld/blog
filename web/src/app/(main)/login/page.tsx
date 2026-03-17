@@ -9,7 +9,7 @@ import { useI18n } from "@/lib/i18n-context"
 
 export default function LoginPage() {
   const router = useRouter()
-  const { login, isAuthenticated, isLoading: authLoading } = useAuth()
+  const { login, isAuthenticated, isLoading: authLoading, refresh } = useAuth()
   const { locale } = useI18n()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -50,8 +50,9 @@ export default function LoginPage() {
       if (!response.ok || !data.success) {
         throw new Error(data.error || (locale === "zh" ? "登录失败" : "Login failed"))
       }
-      // 刷新认证状态
-      router.refresh()
+      // 刷新认证状态（使用 SWR 的 mutate）
+      await refresh()
+      setLoading(false)
     } catch (err) {
       setError((err as Error).message)
       setLoading(false)

@@ -1,8 +1,7 @@
 # -----------------------------------------------------------------------------
-# Blog Servers Backend - Multi-stage Dockerfile
+# Blog Servers Backend - Dockerfile
 # Koa.js backend with TypeScript and better-sqlite3
 # Package manager: pnpm (via Corepack)
-# This build runs independently without monorepo workspace
 # -----------------------------------------------------------------------------
 
 # -----------------
@@ -13,20 +12,19 @@ FROM node:20-alpine AS deps
 # Set working directory
 WORKDIR /app
 
-# Enable pnpm via Corepack (使用固定版本避免网络问题)
+# Enable pnpm via Corepack
 RUN corepack enable && corepack prepare pnpm@10 --activate
 
 # Install build tools for native modules (better-sqlite3)
 RUN apk add --no-cache python3 make g++ sqlite
 
-# Copy package files (independent project, no workspace)
-COPY package.json ./
+# Copy package files
+COPY package.json pnpm-lock.yaml ./
 
-# Install dependencies (enable build scripts for native modules)
-# Don't use --frozen-lockfile since we're in a monorepo without independent lockfile
+# Install dependencies
 RUN pnpm install --ignore-scripts=false
 
-# Explicitly rebuild better-sqlite3 to ensure native module is compiled correctly
+# Rebuild better-sqlite3 for Alpine
 RUN pnpm rebuild better-sqlite3
 
 # -----------------
@@ -34,16 +32,13 @@ RUN pnpm rebuild better-sqlite3
 # -----------------
 FROM node:20-alpine AS builder
 
-# Set working directory
 WORKDIR /app
 
-# Enable pnpm via Corepack (使用固定版本避免网络问题)
+# Enable pnpm via Corepack
 RUN corepack enable && corepack prepare pnpm@10 --activate
 
-# Copy compiled dependencies from deps stage
+# Copy dependencies and source
 COPY --from=deps /app/node_modules ./node_modules
-
-# Copy source code
 COPY package.json ./
 COPY tsconfig.json ./
 COPY src ./src
@@ -56,7 +51,7 @@ RUN pnpm run build
 # -----------------
 FROM node:20-alpine AS runner
 
-# Set production environment
+# Set environment
 ENV NODE_ENV=production \
     PORT=3001
 
@@ -65,26 +60,24 @@ WORKDIR /app
 # Install runtime dependencies
 RUN apk add --no-cache libc6-compat sqlite
 
-# Enable pnpm via Corepack (使用固定版本避免网络问题)
+# Enable pnpm
 RUN corepack enable && corepack prepare pnpm@10 --activate
 
-# Copy package.json for metadata
+# Copy package.json
 COPY package.json ./
 
-# Copy compiled dependencies (with native modules)
+# Copy compiled dependencies with native modules
 COPY --from=deps /app/node_modules ./node_modules
 
 # Copy built source
 COPY --from=builder /app/dist ./dist
 
-# Create database directory and set permissions
-RUN mkdir -p /app/database && \
+# Create directories
+RUN mkdir -p /app/database /app/public/uploads && \
     chown -R node:node /app
 
-# Switch to non-root user
 USER node
 
-# Expose application port
 EXPOSE 3001
 
 # Start the server

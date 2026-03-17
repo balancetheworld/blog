@@ -8,6 +8,7 @@ import { recentlyController } from '../controllers/recently.controller'
 import { categoryController } from '../controllers/category.controller'
 import { profileController } from '../controllers/profile.controller'
 import { userController } from '../controllers/user.controller'
+// import { uploadController } from '../controllers/upload.controller'
 import { authMiddleware, adminMiddleware } from '../middleware/auth.middleware'
 
 export const router = new Router({
@@ -105,5 +106,12 @@ adminRouter.put('/users/:id', userController.updateUser)
 adminRouter.delete('/users/:id', userController.deleteUser)
 adminRouter.post('/users/:id/reset-password', userController.resetUserPassword)
 adminRouter.post('/users/:id/resend-verification', userController.resendUserVerification)
+
+// Upload routes (require authentication)
+// TODO: Fix multer import issue
+// const uploadRouter = new Router()
+// uploadRouter.use(authMiddleware)
+// uploadRouter.post('/image', uploadController.uploadImage)
+// router.use('/upload', uploadRouter.routes())
 
 router.use('/admin', adminRouter.routes())

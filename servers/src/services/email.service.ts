@@ -7,6 +7,10 @@ const RESEND_API_KEY = process.env.RESEND_API_KEY || ''
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'noreply@yourdomain.com'
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000'
 
+// 调试：打印环境变量
+console.log('[Email Service] RESEND_API_KEY:', RESEND_API_KEY ? `${RESEND_API_KEY.slice(0, 10)}...` : 'NOT SET')
+console.log('[Email Service] FROM_EMAIL:', FROM_EMAIL)
+
 // 初始化 Resend 客户端
 const resend = RESEND_API_KEY ? new Resend(RESEND_API_KEY) : null
 
