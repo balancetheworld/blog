@@ -55,7 +55,8 @@ RUN addgroup -S nodejs && \
 COPY --from=builder --chown=nextjs:nodejs /app/web/.next/standalone ./
 
 # Copy .next/static (NOT included in standalone, required for Next.js)
-COPY --from=builder --chown=nextjs:nodejs /app/web/.next/static ./.next/static
+# static must go into web/.next/static because that's where the app is
+COPY --from=builder --chown=nextjs:nodejs /app/web/.next/static ./web/.next/static
 
 # Copy public assets
 COPY --from=builder --chown=nextjs:nodejs /app/web/public ./public
