@@ -42,13 +42,17 @@ RUN addgroup -S nodejs && \
 
 USER nextjs
 
-# WORKDIR is /app/web
-# standalone server.js is at /app/web/.next/standalone/server.js
-# but Next.js expects to run from the web directory
+# standalone structure is:
+# /app/web/.next/standalone/
+#   ├── node_modules/
+#   └── web/
+#       ├── server.js
+#       ├── .next/
+#       └── ...
 
-WORKDIR /app/web
+WORKDIR /app/web/.next/standalone/web
 
 EXPOSE 3000
 
-# Start the server from standalone
-CMD ["node", ".next/standalone/server.js"]
+# Start the server
+CMD ["node", "server.js"]
