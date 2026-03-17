@@ -66,6 +66,7 @@ export default {
     articles: '文章',
     categories: '分类',
     recently: '动态',
+    users: '用户管理',
   },
 
   // Footer

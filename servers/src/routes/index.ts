@@ -7,6 +7,8 @@ import { likeController } from '../controllers/like.controller'
 import { recentlyController } from '../controllers/recently.controller'
 import { categoryController } from '../controllers/category.controller'
 import { profileController } from '../controllers/profile.controller'
+import { userController } from '../controllers/user.controller'
+// import { uploadController } from '../controllers/upload.controller'
 import { authMiddleware, adminMiddleware } from '../middleware/auth.middleware'
 
 export const router = new Router({
@@ -19,6 +21,19 @@ authRouter.post('/register', authController.register)
 authRouter.post('/login', authController.login)
 authRouter.post('/logout', authController.logout)
 authRouter.get('/me', authMiddleware, authController.me)
+// 邮箱认证相关路由
+authRouter.post('/register-email', authController.registerWithEmail)
+authRouter.post('/login-email', authController.loginWithEmail)
+authRouter.post('/verify-email', authController.verifyEmail)
+authRouter.post('/resend-verification', authController.resendVerification)
+authRouter.post('/forgot-password', authController.forgotPassword)
+authRouter.post('/reset-password', authController.resetPassword)
+authRouter.post('/request-email-change', authMiddleware, authController.requestEmailChange)
+authRouter.post('/verify-email-change', authController.verifyEmailChange)
+authRouter.post('/cancel-email-change', authMiddleware, authController.cancelEmailChange)
+// 邮箱验证码相关路由
+authRouter.post('/send-verification-code', authController.sendVerificationCode)
+authRouter.post('/verify-email-code', authController.verifyEmailCode)
 router.use('/auth', authRouter.routes())
 
 // Article routes (public)
@@ -82,5 +97,21 @@ adminRouter.delete('/categories/:id', categoryController.delete)
 
 // Profile
 adminRouter.put('/profile', profileController.update)
+
+// Users management
+adminRouter.get('/users', userController.getAllUsers)
+adminRouter.get('/users/:id', userController.getUserById)
+adminRouter.post('/users', userController.createUser)
+adminRouter.put('/users/:id', userController.updateUser)
+adminRouter.delete('/users/:id', userController.deleteUser)
+adminRouter.post('/users/:id/reset-password', userController.resetUserPassword)
+adminRouter.post('/users/:id/resend-verification', userController.resendUserVerification)
+
+// Upload routes (require authentication)
+// TODO: Fix multer import issue
+// const uploadRouter = new Router()
+// uploadRouter.use(authMiddleware)
+// uploadRouter.post('/image', uploadController.uploadImage)
+// router.use('/upload', uploadRouter.routes())
 
 router.use('/admin', adminRouter.routes())

@@ -66,6 +66,7 @@ export default {
     articles: 'Articles',
     categories: 'Categories',
     recently: 'Thoughts',
+    users: 'Users',
   },
 
   // Footer

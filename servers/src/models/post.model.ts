@@ -167,7 +167,27 @@ export const PostModel = {
 
   delete: (id: number): void => {
     const db = getDatabase()
-    db.prepare('DELETE FROM posts WHERE id = ?').run(id)
+    // 使用事务确保删除操作的原子性
+    const deletePost = db.transaction(() => {
+      // 先删除关联数据
+      // 1. 删除翻译数据（post_translations 有外键约束，必须先删除）
+      db.prepare('DELETE FROM post_translations WHERE post_id = ?').run(id)
+
+      // 2. 删除评论
+      db.prepare('DELETE FROM comments WHERE article_type = ? AND article_id = ?').run('post', id)
+
+      // 3. 删除点赞
+      db.prepare('DELETE FROM likes WHERE article_type = ? AND article_id = ?').run('post', id)
+
+      // 4. post_tags 会通过 ON DELETE CASCADE 自动删除
+
+      // 最后删除主记录
+      const result = db.prepare('DELETE FROM posts WHERE id = ?').run(id)
+      if (result.changes === 0) {
+        throw new Error('Post not found')
+      }
+    })
+    deletePost()
   },
 
   incrementViewCount: (id: number): void => {

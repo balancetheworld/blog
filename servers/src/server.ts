@@ -1,5 +1,11 @@
+// Load environment variables FIRST before any other imports
+import dotenv from 'dotenv'
+dotenv.config()
+
 import Koa from 'koa'
 import bodyParser from 'koa-bodyparser'
+import serve from 'koa-static'
+import path from 'path'
 import { router } from './routes'
 import { errorHandler } from './middleware/error.middleware'
 import { logger } from './middleware/logger.middleware'
@@ -22,6 +28,10 @@ app.use(logger)
 
 // CORS
 app.use(corsMiddleware)
+
+// Static files - serve uploaded images
+const publicDir = path.join(process.cwd(), 'public')
+app.use(serve(publicDir))
 
 // Body parser
 app.use(bodyParser({

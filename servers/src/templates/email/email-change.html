@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verify Your New Email</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .header {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      padding: 40px 30px;
+      text-align: center;
+    }
+    .header h1 {
+      color: white;
+      margin: 0;
+      font-size: 28px;
+      font-weight: 600;
+    }
+    .content {
+      padding: 40px 30px;
+    }
+    .content h2 {
+      color: #333;
+      font-size: 22px;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+    .content p {
+      color: #555;
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+    .button {
+      display: inline-block;
+      padding: 14px 32px;
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 16px;
+      margin: 20px 0;
+    }
+    .button:hover {
+      opacity: 0.9;
+    }
+    .footer {
+      background: #f9f9f9;
+      padding: 20px 30px;
+      text-align: center;
+      font-size: 14px;
+      color: #888;
+      border-top: 1px solid #eee;
+    }
+    .email-box {
+      background: #f5f5f5;
+      padding: 12px;
+      border-radius: 6px;
+      font-family: monospace;
+      font-size: 14px;
+      word-break: break-all;
+    }
+    .info {
+      background: #e3f2fd;
+      border-left: 4px solid #2196f3;
+      padding: 12px 16px;
+      margin: 20px 0;
+      border-radius: 4px;
+      font-size: 14px;
+      color: #0d47a1;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>📧 Email Change Request</h1>
+    </div>
+    <div class="content">
+      <h2>Verify Your New Email Address</h2>
+      <p>You requested to change your email address. Please verify the new email address to complete this change.</p>
+      <p>Your new email address:</p>
+      <div class="email-box">{{newEmail}}</div>
+      <div class="info">
+        <strong>Note:</strong> After verification, this email will become your primary account email.
+      </div>
+      <p style="text-align: center;">
+        <a href="{{verifyUrl}}" class="button">Verify New Email</a>
+      </p>
+      <p style="font-size: 14px; color: #888;">
+        This link will expire in {{expiryDays}} days. If you didn't request this change, you can safely ignore this email.
+      </p>
+      <p style="font-size: 14px; color: #888;">
+        If the button above doesn't work, you can copy and paste this link into your browser:
+      </p>
+      <p style="font-size: 12px; color: #666; word-break: break-all;">{{verifyUrl}}</p>
+    </div>
+    <div class="footer">
+      <p>&copy; 2026 Blog. All rights reserved.</p>
+    </div>
+  </div>
+</body>
+</html>

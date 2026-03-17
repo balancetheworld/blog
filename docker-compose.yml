@@ -32,10 +32,17 @@ services:
       - PORT=3001
       - CORS_ORIGIN=https://blog.smob.cc
       - DATABASE_PATH=/app/database/blog.db
-      - SESSION_SECRET=your-secret-key-change-in-production
+      - SESSION_SECRET=${SESSION_SECRET:-change-this-to-a-random-secret-in-production}
+      # 邮件服务配置 (Resend)
+      - RESEND_API_KEY=${RESEND_API_KEY}
+      - RESEND_FROM_EMAIL=${RESEND_FROM_EMAIL:-noreply@smob.cc}
+      - FRONTEND_URL=${FRONTEND_URL:-https://blog.smob.cc}
+      - COOKIE_SECURE=${COOKIE_SECURE:-true}
     volumes:
       # 持久化数据库
       - blog-data:/app/database
+      # 持久化上传的图片
+      - blog-uploads:/app/public/uploads
     restart: unless-stopped
     networks:
       - blog-network
@@ -43,6 +50,8 @@ services:
 # 数据卷
 volumes:
   blog-data:
+    driver: local
+  blog-uploads:
     driver: local
 
 # 网络
