@@ -81,10 +81,12 @@ RUN apk add --no-cache libc6-compat sqlite
 # Enable pnpm
 RUN corepack enable && corepack prepare pnpm@10 --activate
 
-# Copy package.json
-COPY servers/package.json ./servers/package.json
+# Copy package.json and workspace config
+COPY servers/package.json ./package.json
+COPY pnpm-workspace.yaml ./pnpm-workspace.yaml
+COPY pnpm-lock.yaml ./pnpm-lock.yaml
 
-# Copy only production dependencies from deps stage
+# Copy all dependencies from deps stage (pnpm uses virtual store)
 COPY --from=deps /app/node_modules ./node_modules
 
 # Copy built source
