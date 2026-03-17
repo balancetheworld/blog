@@ -22,13 +22,13 @@ COPY pnpm-workspace.yaml ./pnpm-workspace.yaml
 
 # Copy web package.json
 COPY web/package.json ./web/package.json
+COPY web/tsconfig.json ./web/tsconfig.json
 
 # Install dependencies
 RUN pnpm install
 
-# Copy web source
-COPY web/src ./web/src
-COPY web/public ./web/public
+# Copy all web source files
+COPY web ./web
 
 # Build Next.js application
 WORKDIR /app/web
