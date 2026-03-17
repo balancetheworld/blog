@@ -5,13 +5,10 @@
 # Build context: project root (monorepo)
 # -----------------------------------------------------------------------------
 
-FROM node:24-alpine
-
-# Set production environment
-ENV NODE_ENV=production \
-    PORT=3000 \
-    HOSTNAME="0.0.0.0" \
-    BACKEND_URL=http://servers:3001
+# -----------------
+# Builder Stage
+# -----------------
+FROM node:24-alpine AS builder
 
 WORKDIR /app
 
@@ -31,17 +28,41 @@ COPY web/next.config.mjs ./web/next.config.mjs
 COPY web ./web
 
 # Install dependencies and build
-RUN --mount=type=cache,target=/root/.pnpm-store pnpm --dir /app/web install
-RUN --mount=type=cache,target=/root/.pnpm-store pnpm --dir /app/web run build
+RUN pnpm --dir /app/web install
+RUN pnpm --dir /app/web run build
+
+# -----------------
+# Runner Stage
+# -----------------
+FROM node:24-alpine AS runner
+
+# Set production environment
+ENV NODE_ENV=production \
+    PORT=3000 \
+    HOSTNAME="0.0.0.0" \
+    BACKEND_URL=http://servers:3001
+
+WORKDIR /app
+
+# Enable pnpm via Corepack
+RUN corepack enable && corepack prepare pnpm@10 --activate
 
 # Create non-root user
 RUN addgroup -S nodejs && \
-    adduser -S nextjs -G nodejs && \
-    chown -R nextjs:nodejs /app
+    adduser -S nextjs -G nodejs
+
+# Copy standalone output from builder
+COPY --from=builder --chown=nextjs:nodejs /app/web/.next/standalone ./
+
+# Copy .next/static (NOT included in standalone, required for Next.js)
+COPY --from=builder --chown=nextjs:nodejs /app/web/.next/static ./.next/static
+
+# Copy public assets
+COPY --from=builder --chown=nextjs:nodejs /app/web/public ./public
 
 USER nextjs
 
-WORKDIR /app/web/.next/standalone/web
+WORKDIR /app
 
 EXPOSE 3000
 
