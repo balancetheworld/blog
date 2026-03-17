@@ -29,6 +29,9 @@ COPY servers/package.json ./servers/package.json
 # Install dependencies
 RUN pnpm install
 
+# Change to servers directory for rebuild
+WORKDIR /app/servers
+
 # Rebuild better-sqlite3 for Alpine
 RUN pnpm rebuild better-sqlite3
 
