@@ -33,14 +33,11 @@ COPY servers/src ./servers/src
 # Install all dependencies
 RUN pnpm install
 
-# Build TypeScript
-RUN pnpm --dir /app/servers run build
+# Build TypeScript (run from /app to avoid WORKDIR issues)
+RUN cd /app/servers && pnpm run build
 
-# Rebuild better-sqlite3 for Alpine
+# Rebuild better-sqlite3 for Alpine (must run from /app)
 RUN pnpm rebuild better-sqlite3
-
-# Verify the .node file exists
-RUN ls -la /app/node_modules/.pnpm/better-sqlite3@*/node_modules/better-sqlite3/build/ || echo "Build artifacts not found"
 
 # Create directories
 RUN mkdir -p /app/database /app/public/uploads && \

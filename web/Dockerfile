@@ -31,9 +31,7 @@ COPY web/next.config.mjs ./web/next.config.mjs
 COPY web ./web
 
 # Install dependencies and build
-WORKDIR /app/web
-RUN pnpm install && \
-    pnpm run build
+RUN cd /app/web && pnpm install && pnpm run build
 
 # Create non-root user
 RUN addgroup -S nodejs && \
@@ -42,14 +40,7 @@ RUN addgroup -S nodejs && \
 
 USER nextjs
 
-# standalone structure is:
-# /app/web/.next/standalone/
-#   ├── node_modules/
-#   └── web/
-#       ├── server.js
-#       ├── .next/
-#       └── ...
-
+# standalone structure: server.js is at /app/web/.next/standalone/web/server.js
 WORKDIR /app/web/.next/standalone/web
 
 EXPOSE 3000
