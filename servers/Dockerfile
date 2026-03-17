@@ -5,39 +5,7 @@
 # Build context: project root (monorepo)
 # -----------------------------------------------------------------------------
 
-# -----------------
-# Builder Stage
-# -----------------
-FROM node:20-alpine AS builder
-
-WORKDIR /app
-
-# Enable pnpm via Corepack
-RUN corepack enable && corepack prepare pnpm@10 --activate
-
-# Install build tools for native modules
-RUN apk add --no-cache python3 make g++
-
-# Copy monorepo config
-COPY pnpm-lock.yaml ./pnpm-lock.yaml
-COPY pnpm-workspace.yaml ./pnpm-workspace.yaml
-COPY servers/package.json ./servers/package.json
-
-# Install all dependencies (including devDependencies for TypeScript)
-RUN pnpm install
-
-# Copy servers source
-COPY servers/tsconfig.json ./servers/tsconfig.json
-COPY servers/src ./servers/src
-
-# Build TypeScript
-WORKDIR /app/servers
-RUN pnpm run build
-
-# -----------------
-# Runner Stage
-# -----------------
-FROM node:20-alpine AS runner
+FROM node:20-alpine
 
 # Set environment
 ENV NODE_ENV=production \
@@ -45,30 +13,43 @@ ENV NODE_ENV=production \
 
 WORKDIR /app
 
-# Install runtime dependencies
-RUN apk add --no-cache libc6-compat sqlite
+# Install runtime and build dependencies
+RUN apk add --no-cache libc6-compat sqlite python3 make g++
 
-# Enable pnpm
+# Enable pnpm via Corepack
 RUN corepack enable && corepack prepare pnpm@10 --activate
 
-# Copy workspace config files
+# Copy monorepo config files (required for pnpm workspace)
 COPY pnpm-workspace.yaml ./pnpm-workspace.yaml
 COPY pnpm-lock.yaml ./pnpm-lock.yaml
+
+# Copy servers package files
 COPY servers/package.json ./servers/package.json
+COPY servers/tsconfig.json ./servers/tsconfig.json
 
-# Install ONLY production dependencies
-RUN pnpm install --prod
+# Copy source code
+COPY servers/src ./servers/src
 
-# Copy built source from builder
-COPY --from=builder /app/servers/dist ./dist
+# Install all dependencies (including devDependencies for TypeScript build)
+RUN pnpm install
+
+# Change to servers directory and rebuild native module
+WORKDIR /app/servers
+RUN pnpm rebuild better-sqlite3
+
+# Build TypeScript
+RUN pnpm run build
+
+# Clean up dev dependencies
+RUN pnpm prune --prod
 
 # Create directories
-RUN mkdir -p database public/uploads && \
+RUN mkdir -p /app/database /app/public/uploads && \
     chown -R node:node /app
 
 USER node
 
-WORKDIR /app
+WORKDIR /app/servers
 
 EXPOSE 3001
 
