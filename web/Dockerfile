@@ -5,17 +5,20 @@
 # Build context: project root (monorepo)
 # -----------------------------------------------------------------------------
 
-# -----------------
-# Builder Stage
-# -----------------
-FROM node:24-alpine AS builder
+FROM node:24-alpine
+
+# Set production environment
+ENV NODE_ENV=production \
+    PORT=3000 \
+    HOSTNAME="0.0.0.0" \
+    BACKEND_URL=http://servers:3001
 
 WORKDIR /app
 
 # Enable pnpm via Corepack
 RUN corepack enable && corepack prepare pnpm@10 --activate
 
-# Copy monorepo config files (required for pnpm workspace)
+# Copy monorepo config files
 COPY pnpm-workspace.yaml ./pnpm-workspace.yaml
 COPY pnpm-lock.yaml ./pnpm-lock.yaml
 
@@ -32,40 +35,20 @@ WORKDIR /app/web
 RUN pnpm install && \
     pnpm run build
 
-# -----------------
-# Runner Stage
-# -----------------
-FROM node:24-alpine AS runner
-
-# Set production environment
-ENV NODE_ENV=production \
-    PORT=3000 \
-    HOSTNAME="0.0.0.0" \
-    BACKEND_URL=http://servers:3001
-
-WORKDIR /app
-
-# Enable pnpm via Corepack
-RUN corepack enable && corepack prepare pnpm@10 --activate
-
-# Create non-root user for security
+# Create non-root user
 RUN addgroup -S nodejs && \
-    adduser -S nextjs -G nodejs
+    adduser -S nextjs -G nodejs && \
+    chown -R nextjs:nodejs /app
 
-# Copy standalone output from builder
-COPY --from=builder --chown=nextjs:nodejs /app/web/.next/standalone/web ./
-
-# Copy .next/static (required for Next.js standalone, not included in standalone output)
-COPY --from=builder --chown=nextjs:nodejs /app/web/.next/static ./.next/static
-
-# Copy public assets
-COPY --from=builder --chown=nextjs:nodejs /app/web/public ./public
-
-# Switch to non-root user
 USER nextjs
 
-# Expose application port
+# WORKDIR is /app/web
+# standalone server.js is at /app/web/.next/standalone/server.js
+# but Next.js expects to run from the web directory
+
+WORKDIR /app/web
+
 EXPOSE 3000
 
-# Start the server
-CMD ["node", "server.js"]
+# Start the server from standalone
+CMD ["node", ".next/standalone/server.js"]
