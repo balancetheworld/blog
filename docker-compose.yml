@@ -5,8 +5,8 @@ services:
   # 前端服务
   web:
     build:
-      context: ./web
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: web/Dockerfile
     container_name: blog-web
     ports:
       - "3000:3000"

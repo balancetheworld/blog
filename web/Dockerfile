@@ -2,7 +2,7 @@
 # Blog Web Frontend - Multi-stage Dockerfile
 # Next.js 16 with standalone output for optimized production builds
 # Package manager: pnpm (via Corepack)
-# This build runs independently without monorepo workspace
+# Build context: project root (monorepo)
 # -----------------------------------------------------------------------------
 
 # -----------------
@@ -13,19 +13,30 @@ FROM node:24-alpine AS builder
 # Set working directory
 WORKDIR /app
 
-# Enable pnpm via Corepack (使用固定版本避免网络问题)
+# Enable pnpm via Corepack
 RUN corepack enable && corepack prepare pnpm@10 --activate
 
-# Copy package files (independent project, no workspace)
-COPY package.json ./
+# Copy monorepo package files
+COPY pnpm-lock.yaml ./pnpm-lock.yaml
+COPY pnpm-workspace.yaml ./pnpm-workspace.yaml
 
-# Install dependencies (enable build scripts for native modules)
-RUN pnpm install --frozen-lockfile --ignore-scripts=false 2>/dev/null || pnpm install --ignore-scripts=false
+# Copy web package.json
+COPY web/package.json ./web/package.json
 
-# Copy source code
-COPY . .
+# Install dependencies
+RUN pnpm install
 
-# Build Next.js application (standalone mode configured in next.config.mjs)
+# Copy web source
+COPY web/package.json ./web/package.json
+COPY web/tsconfig.json ./web/tsconfig.json
+COPY web/next.config.mjs ./web/next.config.mjs
+COPY web/src ./web/src
+COPY web/public ./web/public
+COPY web/tailwind.config.ts ./web/tailwind.config.ts
+COPY web/postcss.config.mjs ./web/postcss.config.mjs
+
+# Build Next.js application
+WORKDIR /app/web
 RUN pnpm run build
 
 # -----------------
@@ -41,7 +52,7 @@ ENV NODE_ENV=production \
 
 WORKDIR /app
 
-# Enable pnpm via Corepack (使用固定版本避免网络问题)
+# Enable pnpm via Corepack
 RUN corepack enable && corepack prepare pnpm@10 --activate
 
 # Create non-root user for security
@@ -49,12 +60,9 @@ RUN addgroup -S nodejs && \
     adduser -S nextjs -G nodejs
 
 # Copy necessary files from builder
-# Standalone output contains server.js and all required dependencies
-COPY --from=builder /app/public ./public
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-
-# Copy static files
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=builder /app/web/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/web/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/web/.next/static ./.next/static
 
 # Switch to non-root user
 USER nextjs
