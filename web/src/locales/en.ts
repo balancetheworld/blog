@@ -69,7 +69,6 @@ export default {
     users: 'Users',
   },
 
-  // Footer
   footer: {
     copyright: 'All rights reserved',
   },
