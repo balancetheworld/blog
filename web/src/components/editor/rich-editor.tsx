@@ -91,15 +91,18 @@ export function RichEditor({
   const handleDrop = async (e: React.DragEvent) => {
     e.preventDefault()
     e.stopPropagation()
+    // 立即重置拖拽状态
     setDragActive(false)
 
     const file = e.dataTransfer.files?.[0]
     if (file && file.type.startsWith('image/')) {
       const url = await handleFileUpload(file)
       if (url && editor) {
-        editor.chain().focus().setImage({ src: url }).run()
+        editor.chain().focus().setImage({ src: url, width: '50%' }).run()
       }
     }
+    // 确保上传完成后状态已重置（防止上传失败时状态卡住）
+    setDragActive(false)
   }
 
   const editor = useEditor({
@@ -120,12 +123,16 @@ export function RichEditor({
           const file = event.dataTransfer.files[0]
           if (file.type.startsWith('image/')) {
             event.preventDefault()
+            // 重置拖拽状态
+            setDragActive(false)
             handleFileUpload(file).then((url) => {
+              // 无论上传成功与否，确保状态已重置
+              setDragActive(false)
               if (url && editor) {
                 const { schema } = view.state
                 const coordinates = view.posAtCoords({ left: event.clientX, top: event.clientY })
                 if (coordinates) {
-                  const node = schema.nodes.image.create({ src: url })
+                  const node = schema.nodes.image.create({ src: url, width: '50%' })
                   const transaction = view.state.tr.insert(coordinates.pos, node)
                   view.dispatch(transaction)
                 }

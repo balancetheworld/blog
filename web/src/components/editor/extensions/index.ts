@@ -3,7 +3,7 @@ import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
 import Color from '@tiptap/extension-color'
 import Highlight from '@tiptap/extension-highlight'
 import HorizontalRule from '@tiptap/extension-horizontal-rule'
-import Image from '@tiptap/extension-image'
+import { CustomImage } from './custom-image'
 import Link from '@tiptap/extension-link'
 import TextAlign from '@tiptap/extension-text-align'
 import { TextStyle } from '@tiptap/extension-text-style'
@@ -56,11 +56,9 @@ export const getExtensions = (options: ExtensionOptions = {}) => {
     TextAlign.configure({
       types: ['heading', 'paragraph'],
     }),
-    Image.configure({
-      HTMLAttributes: {
-        class: 'rounded-lg max-w-full h-auto',
-      },
+    CustomImage.configure({
       inline: true,
+      allowBase64: true,
     }),
     Typography.configure(),
     TaskList.configure({

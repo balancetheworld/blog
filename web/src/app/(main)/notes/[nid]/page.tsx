@@ -25,7 +25,7 @@ export default function NoteDetailPage() {
 
   if (isLoading) {
     return (
-      <main className="mx-auto max-w-2xl px-6 py-8">
+      <main className="mx-auto w-full max-w-4xl px-4 sm:px-6 lg:px-8 py-8">
         <div className="animate-pulse glass-card-static p-8">
           <div className="h-7 w-2/3 rounded bg-muted" />
           <div className="mt-4 h-4 w-24 rounded bg-muted" />
@@ -41,7 +41,7 @@ export default function NoteDetailPage() {
 
   if (!note) {
     return (
-      <main className="mx-auto max-w-2xl px-6 py-16 text-center">
+      <main className="mx-auto w-full max-w-4xl px-4 sm:px-6 lg:px-8 py-16 text-center">
         <p className="text-muted-foreground">
           {locale === "zh" ? "\u624b\u8bb0\u672a\u627e\u5230" : "Note not found"}
         </p>
@@ -62,7 +62,7 @@ export default function NoteDetailPage() {
   if (!translation) return null
 
   return (
-    <main className="mx-auto max-w-2xl px-6">
+    <main className="mx-auto w-full max-w-4xl px-4 sm:px-6 lg:px-8">
       <article className="py-8 pb-16">
         <Link
           href="/"

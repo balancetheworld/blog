@@ -59,7 +59,7 @@ export function ImageButton({ editor }: ImageButtonProps) {
 
       if (response.ok && data.success && data.data?.url) {
         // 插入图片到编辑器
-        editor.chain().focus().setImage({ src: data.data.url }).run()
+        editor.chain().focus().setImage({ src: data.data.url, width: '50%' }).run()
         setOpen(false)
         setPreviewUrl(null)
       } else {

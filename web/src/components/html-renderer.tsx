@@ -1,7 +1,8 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { cn } from '@/lib/utils'
+import { ImageLightbox } from './image-lightbox'
 import type { HtmlRendererProps } from "@/types/components"
 
 // 动态导入 highlight.js，避免 SSR 问题
@@ -10,10 +11,39 @@ const highlightJs = typeof window !== 'undefined' ? require('highlight.js') : nu
 export function HtmlRenderer({ content, className }: HtmlRendererProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const processedRef = useRef<WeakSet<HTMLPreElement>>(new WeakSet())
+  const [lightboxOpen, setLightboxOpen] = useState(false)
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const [images, setImages] = useState<string[]>([])
 
   useEffect(() => {
     const container = containerRef.current
     if (!container || !highlightJs) return
+
+    // 设置图片双击事件
+    const setupImageDoubleClick = () => {
+      // 收集所有图片
+      const imgs = container.querySelectorAll('img')
+      const imageUrls: string[] = []
+
+      imgs.forEach((img) => {
+        const src = img.getAttribute('src')
+        if (src) {
+          imageUrls.push(src)
+
+          // 添加双击事件
+          img.style.cursor = 'pointer'
+          img.addEventListener('dblclick', (e) => {
+            e.preventDefault()
+            const index = imageUrls.indexOf(src)
+            setCurrentImageIndex(index >= 0 ? index : 0)
+            setImages(imageUrls)
+            setLightboxOpen(true)
+          })
+        }
+      })
+
+      return imageUrls
+    }
 
     // 处理所有代码块
     const processCodeBlocks = () => {
@@ -167,11 +197,13 @@ export function HtmlRenderer({ content, className }: HtmlRendererProps) {
     // 立即处理一次
     processCodeBlocks()
     processTaskLists()
+    setupImageDoubleClick()
 
     // 使用 MutationObserver 监听 DOM 变化
     const observer = new MutationObserver(() => {
       processCodeBlocks()
       processTaskLists()
+      setupImageDoubleClick()
     })
 
     observer.observe(container, {
@@ -185,10 +217,18 @@ export function HtmlRenderer({ content, className }: HtmlRendererProps) {
   }, [content])
 
   return (
-    <div
-      ref={containerRef}
-      className={cn('prose-blog', className)}
-      dangerouslySetInnerHTML={{ __html: content || '' }}
-    />
+    <>
+      <div
+        ref={containerRef}
+        className={cn('prose-blog', className)}
+        dangerouslySetInnerHTML={{ __html: content || '' }}
+      />
+      <ImageLightbox
+        images={images}
+        initialIndex={currentImageIndex}
+        isOpen={lightboxOpen}
+        onClose={() => setLightboxOpen(false)}
+      />
+    </>
   )
 }

@@ -12,7 +12,7 @@ export default function AboutPage() {
   const username = "caitria"
 
   return (
-    <main className="mx-auto max-w-2xl px-6 pb-12">
+    <main className="mx-auto w-full max-w-4xl px-4 sm:px-6 lg:px-8 pb-12">
       <h1 className="mb-8 text-2xl font-bold tracking-tight text-foreground">
         {t("about.title")}
       </h1>
@@ -34,7 +34,13 @@ export default function AboutPage() {
         {/* Bio */}
         <div className="mt-6 border-t border-border pt-6">
           <p className="text-sm leading-relaxed text-foreground/95">
-            {introduce}
+            你好👋，这里是 Caitria
+          </p>
+          <p className="text-sm leading-relaxed text-foreground/95">
+            重庆邮电大学软件工程专业24级学生，正在努力成为厉害的前端工程师。<br/>
+            2005年12月14号出生的射手座<br/>
+            是非常纯血的ENTJ<br/>
+            喜欢画画，打羽毛球，桌游，以及switch游戏（尤其是塞尔达）,喜欢猫猫，喜欢收集好看的明信片
           </p>
         </div>
 
