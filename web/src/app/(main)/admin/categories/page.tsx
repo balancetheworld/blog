@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation"
 // 导入 useSWR：用于数据请求+缓存管理（自动处理加载/缓存/重新验证）
 import useSWR from "swr"
 // 导入 Lucide 图标库：用于页面操作按钮的图标展示
-import { ArrowLeft, Plus, Pencil, Trash2, GripVertical, Save, X } from "lucide-react"
+import { ArrowLeft, Plus, Pencil, Trash2, GripVertical, Save, X, Lock } from "lucide-react"
 // 导入 Next.js 链接组件：用于页面跳转（客户端导航，无刷新）
 import Link from "next/link"
 // 导入自定义 Auth 上下文：用于权限校验（判断是否登录/是否为管理员）
@@ -31,16 +31,19 @@ function CategoryForm({
   initial,
   onSave,
   onCancel,
+  locale,
 }: {
   initial?: Category
-  onSave: (data: { slug: string; name_en: string; name_zh: string; sort_order: number }) => Promise<void>
+  onSave: (data: { slug: string; name_en: string; name_zh: string; sort_order: number; is_private: number }) => Promise<void>
   onCancel: () => void
+  locale: 'zh' | 'en'
 }) {
   // 初始化表单状态：新增时为空，编辑时用 initial 数据兜底
   const [slug, setSlug] = useState(initial?.slug || "")          // Slug 输入框状态
   const [nameEn, setNameEn] = useState(initial?.name_en || "")    // 英文名称输入框状态
   const [nameZh, setNameZh] = useState(initial?.name_zh || "")    // 中文名称输入框状态
   const [sortOrder, setSortOrder] = useState(initial?.sort_order ?? 0) // 排序权重状态（默认0）
+  const [isPrivate, setIsPrivate] = useState(initial?.is_private ?? 0) // 私密状态（默认0即公开）
   const [saving, setSaving] = useState(false)                    // 保存按钮加载状态（防止重复提交）
 
   // 表单提交处理函数：验证并提交表单数据
@@ -51,11 +54,12 @@ function CategoryForm({
     setSaving(true)
     try {
       // 调用父组件传入的保存回调，传递处理后的表单数据（去空格）
-      await onSave({ 
-        slug: slug.trim(), 
-        name_en: nameEn.trim(), 
-        name_zh: nameZh.trim(), 
-        sort_order: sortOrder 
+      await onSave({
+        slug: slug.trim(),
+        name_en: nameEn.trim(),
+        name_zh: nameZh.trim(),
+        sort_order: sortOrder,
+        is_private: isPrivate
       })
     } finally {
       // 无论成功失败，都取消保存中状态
@@ -104,9 +108,23 @@ function CategoryForm({
           <input
             value={nameZh}
             onChange={(e) => setNameZh(e.target.value)}
-            placeholder="\u6280\u672f"       // Unicode 转义的“技术”，避免中文编码问题
+            placeholder="技术"
             className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
           />
+        </div>
+        {/* 私密开关 */}
+        <div className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            id="is_private"
+            checked={isPrivate === 1}
+            onChange={(e) => setIsPrivate(e.target.checked ? 1 : 0)}
+            className="h-4 w-4 rounded border-border bg-background text-primary focus:ring-2 focus:ring-primary/30"
+          />
+          <label htmlFor="is_private" className="text-xs text-muted-foreground cursor-pointer flex items-center gap-1">
+            <Lock className="h-3 w-3" />
+            {locale === "zh" ? "设为私密（仅自己可见）" : "Private (only visible to you)"}
+          </label>
         </div>
       </div>
       {/* 表单操作按钮：取消 + 保存 */}
@@ -163,17 +181,17 @@ export default function CategoriesPage() {
   }
 
   // 新增分类处理函数：调用 API 创建分类
-  const handleCreate = async (formData: { slug: string; name_en: string; name_zh: string; sort_order: number }) => {
+  const handleCreate = async (formData: { slug: string; name_en: string; name_zh: string; sort_order: number; is_private: number }) => {
     try {
       // 调用 POST 请求创建分类
       const result = await api.post<any>('/api/admin/categories', formData)
-      if (result.data.success) {
+      if (result.success) {
         // 创建成功：关闭新增表单，刷新分类列表
         setShowNew(false)
         mutate() // 手动触发 useSWR 重新请求数据
       } else {
         // 创建失败：提示错误
-        alert(result.data.error || "Failed to create")
+        alert(result.error || "Failed to create")
       }
     } catch (error: any) {
       // 捕获网络/接口异常：提示错误
@@ -182,17 +200,17 @@ export default function CategoriesPage() {
   }
 
   // 编辑分类处理函数：调用 API 更新指定ID的分类
-  const handleUpdate = async (id: number, formData: { slug: string; name_en: string; name_zh: string; sort_order: number }) => {
+  const handleUpdate = async (id: number, formData: { slug: string; name_en: string; name_zh: string; sort_order: number; is_private: number }) => {
     try {
       // 调用 PUT 请求更新分类（路径带分类ID）
       const result = await api.put<any>(`/api/admin/categories/${id}`, formData)
-      if (result.data.success) {
+      if (result.success) {
         // 更新成功：退出编辑状态，刷新分类列表
         setEditingId(null)
         mutate()
       } else {
         // 更新失败：提示错误
-        alert(result.data.error || "Failed to update")
+        alert(result.error || "Failed to update")
       }
     } catch (error: any) {
       // 捕获异常：提示错误
@@ -207,12 +225,12 @@ export default function CategoriesPage() {
     try {
       // 调用 DELETE 请求删除分类（路径带分类ID）
       const result = await api.delete<any>(`/api/admin/categories/${id}`)
-      if (result.data.success) {
+      if (result.success) {
         // 删除成功：刷新分类列表
         mutate()
       } else {
         // 删除失败：提示错误
-        alert(result.data.error || "Failed to delete")
+        alert(result.error || "Failed to delete")
       }
     } catch (error: any) {
       // 捕获异常：提示错误
@@ -250,9 +268,10 @@ export default function CategoriesPage() {
       {/* 新增分类表单：showNew 为 true 时显示 */}
       {showNew && (
         <div className="mb-6">
-          <CategoryForm 
+          <CategoryForm
             onSave={handleCreate}          // 绑定新增回调
             onCancel={() => setShowNew(false)} // 取消时隐藏表单
+            locale={locale}
           />
         </div>
       )}
@@ -268,6 +287,7 @@ export default function CategoriesPage() {
               initial={cat}                // 传入当前分类数据（编辑用）
               onSave={(d) => handleUpdate(cat.id, d)} // 绑定编辑回调
               onCancel={() => setEditingId(null)}    // 取消时退出编辑
+              locale={locale}
             />
           ) : (
             <div
@@ -283,6 +303,13 @@ export default function CategoriesPage() {
                     <span className="text-sm font-medium text-foreground">
                       {locale === "zh" ? cat.name_zh : cat.name_en}
                     </span>
+                    {/* 私密标识 */}
+                    {cat.is_private === 1 && (
+                      <span className="flex items-center gap-0.5 rounded bg-amber-500/10 px-1.5 py-0.5 text-[10px] text-amber-600 dark:text-amber-400">
+                        <Lock className="h-2.5 w-2.5" />
+                        {locale === "zh" ? "私密" : "Private"}
+                      </span>
+                    )}
                     {/* Slug 标签：展示URL友好标识 */}
                     <span className="rounded bg-muted px-1.5 py-0.5 text-[10px] text-muted-foreground font-mono">
                       {cat.slug}

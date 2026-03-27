@@ -41,7 +41,9 @@ export const articleController = {
     }
 
     try {
-      const articles = ArticleService.getArticles({ lang, category, sort, q })
+      // 检查是否为管理员
+      const isAdmin = ctx.state.user?.role === 'admin'
+      const articles = ArticleService.getArticles({ lang, category, sort, q, isAdmin })
       ctx.body = {
         success: true,
         data: articles,

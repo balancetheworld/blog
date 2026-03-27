@@ -6,6 +6,7 @@ export interface Category {
   name_en: string
   name_zh: string
   sort_order: number
+  is_private: number
   created_at: string
 }
 
@@ -31,11 +32,12 @@ export const CategoryModel = {
   create: (category: Omit<Category, 'id' | 'created_at'>): number => {
     const db = getDatabase()
     const now = new Date().toISOString()
-    const info = db.prepare('INSERT INTO categories (slug, name_en, name_zh, sort_order, created_at) VALUES (?, ?, ?, ?, ?)').run(
+    const info = db.prepare('INSERT INTO categories (slug, name_en, name_zh, sort_order, is_private, created_at) VALUES (?, ?, ?, ?, ?, ?)').run(
       category.slug,
       category.name_en,
       category.name_zh,
       category.sort_order,
+      category.is_private,
       now
     )
     return info.lastInsertRowid as number
@@ -61,6 +63,10 @@ export const CategoryModel = {
     if (category.sort_order !== undefined) {
       fields.push('sort_order = ?')
       values.push(category.sort_order)
+    }
+    if (category.is_private !== undefined) {
+      fields.push('is_private = ?')
+      values.push(category.is_private)
     }
 
     values.push(id)

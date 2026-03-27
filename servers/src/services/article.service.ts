@@ -2,7 +2,7 @@ import { PostModel } from '../models/post.model'
 import { LikeModel } from '../models/like.model'
 
 export const ArticleService = {
-  getArticles: (params: { lang?: string; category?: string; sort?: string; q?: string } = {}) => {
+  getArticles: (params: { lang?: string; category?: string; sort?: string; q?: string; isAdmin?: boolean } = {}) => {
     const posts = PostModel.findAll(params)
 
     // Add like counts

@@ -179,6 +179,9 @@ function migrateDatabase(database: Database.Database): void {
 
   // 邮箱相关字段迁移
   migrateEmailFields(database)
+
+  // 分类私密字段迁移
+  migrateCategoryPrivateField(database)
 }
 
 // 邮箱功能数据库迁移
@@ -254,6 +257,21 @@ function migrateEmailFields(database: Database.Database): void {
     }
   } catch (error) {
     console.error('Email fields migration error:', error)
+  }
+}
+
+// 分类私密功能数据库迁移
+function migrateCategoryPrivateField(database: Database.Database): void {
+  try {
+    const categoryColumns = database.prepare("PRAGMA table_info(categories)").all() as Array<{ name: string }>
+
+    // 添加 is_private 字段
+    if (!categoryColumns.some((col) => col.name === 'is_private')) {
+      database.prepare('ALTER TABLE categories ADD COLUMN is_private INTEGER DEFAULT 0').run()
+      console.log('Database migration: Added is_private column to categories table')
+    }
+  } catch (error) {
+    console.error('Category private field migration error:', error)
   }
 }
 

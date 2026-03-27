@@ -85,6 +85,7 @@ export interface Category {
   name_en: string
   name_zh: string
   sort_order: number
+  is_private: number
   created_at: string
 }
 
@@ -203,6 +204,7 @@ export interface CreateCategoryRequest {
   name_en: string
   name_zh: string
   sort_order?: number
+  is_private?: number
 }
 
 export interface UpdateCategoryRequest {
@@ -210,6 +212,7 @@ export interface UpdateCategoryRequest {
   name_en?: string
   name_zh?: string
   sort_order?: number
+  is_private?: number
 }
 
 // 创建评论类型

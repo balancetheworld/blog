@@ -58,6 +58,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Ignore logout errors
     }
     await mutate({ data: null }, false)
+    // 刷新页面以清除所有缓存数据（包括私密分类）
+    window.location.reload()
   }, [mutate])
 
   return (

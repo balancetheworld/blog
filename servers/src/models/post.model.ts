@@ -26,7 +26,7 @@ export interface PostWithTranslations extends Post {
 }
 
 export const PostModel = {
-  findAll: (params: { lang?: string; category?: string; sort?: string; q?: string } = {}): PostWithTranslations[] => {
+  findAll: (params: { lang?: string; category?: string; sort?: string; q?: string; isAdmin?: boolean } = {}): PostWithTranslations[] => {
     const db = getDatabase()
     let query = `
       SELECT p.*,
@@ -34,9 +34,15 @@ export const PostModel = {
       FROM posts p
       LEFT JOIN post_tags pt ON p.id = pt.post_id
       LEFT JOIN tags t ON pt.tag_id = t.id
+      LEFT JOIN categories c ON p.category = c.slug
       WHERE 1=1
     `
     const queryParams: unknown[] = []
+
+    // 非管理员用户过滤掉私密分类的文章
+    if (params.isAdmin !== true) {
+      query += ' AND (c.is_private = 0 OR c.is_private IS NULL)'
+    }
 
     if (params.category) {
       query += ' AND p.category = ?'

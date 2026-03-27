@@ -1,4 +1,5 @@
 import Router from 'koa-router'
+import { authMiddleware, adminMiddleware, optionalAuthMiddleware } from '../middleware/auth.middleware'
 import { authController } from '../controllers/auth.controller'
 import { articleController } from '../controllers/article.controller'
 import { noteController } from '../controllers/note.controller'
@@ -9,7 +10,6 @@ import { categoryController } from '../controllers/category.controller'
 import { profileController } from '../controllers/profile.controller'
 import { userController } from '../controllers/user.controller'
 import { uploadController } from '../controllers/upload.controller'
-import { authMiddleware, adminMiddleware } from '../middleware/auth.middleware'
 
 export const router = new Router({
   prefix: '/api',
@@ -37,8 +37,8 @@ authRouter.post('/verify-email-code', authController.verifyEmailCode)
 router.use('/auth', authRouter.routes())
 
 // Article routes (public)
-router.get('/articles', articleController.getArticles)
-router.get('/article/:slug', articleController.getArticle)
+router.get('/articles', optionalAuthMiddleware, articleController.getArticles)
+router.get('/article/:slug', optionalAuthMiddleware, articleController.getArticle)
 
 // Notes routes (public)
 router.get('/notes', noteController.getNotes)
@@ -60,7 +60,7 @@ router.get('/likes/status/:articleType/:articleId', authMiddleware, likeControll
 router.get('/recently', recentlyController.getAll)
 
 // Categories routes (public)
-router.get('/categories', categoryController.getAll)
+router.get('/categories', optionalAuthMiddleware, categoryController.getAll)
 
 // Profile routes (public)
 router.get('/profile', profileController.get)

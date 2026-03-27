@@ -90,4 +90,27 @@ export async function adminMiddleware(ctx: Context, next: Next): Promise<void> {
   await next()
 }
 
+// 可选认证中间件：尝试获取用户信息，但不强制要求登录
+// 用于公开 API，以便识别已登录的管理员
+export async function optionalAuthMiddleware(ctx: Context, next: Next): Promise<void> {
+  const token = ctx.cookies?.get(SESSION_COOKIE)
+
+  if (token) {
+    const session = verifySessionFromToken(token)
+
+    if (session.authenticated) {
+      // 将用户信息附加到 ctx.state
+      ctx.state.user = {
+        id: session.userId,
+        username: session.username,
+        displayName: session.displayName,
+        role: session.role,
+      }
+    }
+  }
+
+  // 无论是否认证，都继续执行
+  await next()
+}
+
 export { SESSION_COOKIE }

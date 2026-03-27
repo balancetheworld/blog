@@ -4,7 +4,9 @@ import { CategoryService } from '../services/category.service'
 export const categoryController = {
   getAll: async (ctx: Context) => {
     try {
-      const categories = CategoryService.getAll()
+      // 检查是否为管理员（从 state.user 获取）
+      const isAdmin = ctx.state.user?.role === 'admin'
+      const categories = CategoryService.getAll(isAdmin)
       ctx.body = {
         success: true,
         data: categories,
@@ -19,11 +21,12 @@ export const categoryController = {
   },
 
   create: async (ctx: Context) => {
-    const { slug, name_en, name_zh, sort_order } = ctx.request.body as {
+    const { slug, name_en, name_zh, sort_order, is_private } = ctx.request.body as {
       slug: string
       name_en: string
       name_zh: string
       sort_order?: number
+      is_private?: number
     }
 
     if (!slug || !name_en || !name_zh) {
@@ -36,7 +39,7 @@ export const categoryController = {
     }
 
     try {
-      const category = CategoryService.create(slug, name_en, name_zh, sort_order)
+      const category = CategoryService.create(slug, name_en, name_zh, sort_order, is_private)
       ctx.body = {
         success: true,
         data: category,
@@ -57,6 +60,7 @@ export const categoryController = {
       name_en?: string
       name_zh?: string
       sort_order?: number
+      is_private?: number
     }
 
     try {
