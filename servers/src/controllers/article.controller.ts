@@ -6,7 +6,7 @@ export const articleController = {
   // Admin: 获取所有文章（posts + notes）
   getAllForAdmin: async (ctx: Context) => {
     try {
-      const posts = ArticleService.getArticles()
+      const posts = ArticleService.getArticles({ isAdmin: true })
       const notes = NoteService.getNotes()
 
       // 为 posts 添加 type 字段
