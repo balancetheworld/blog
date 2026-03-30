@@ -126,7 +126,7 @@ function ArticleEditor({
 
   return (
     <div className="fixed inset-0 z-[70] flex items-start justify-center overflow-y-auto bg-foreground/20 backdrop-blur-sm pt-10 pb-10">
-      <div className="glass-card mx-4 w-full max-w-3xl p-6">
+      <div className="glass-card mx-4 w-full max-w-4xl p-6">
         <h2 className="text-lg font-semibold text-foreground mb-4">
           {isEdit ? "Edit Article" : "New Article"}
         </h2>
